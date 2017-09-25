@@ -4,10 +4,17 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "type": "project",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "xani@192.168.1.102:/home/xani/gitRepo/telegram.git"
+        }
+    ],
     "require": {
         "php": ">=7.0.0",
         "fideloper/proxy": "~3.3",
         "laravel/framework": "5.5.*",
+        "xani/bizineh-rud": "dev-webBase",        
         "laravel/tinker": "~1.0"
     },
     "require-dev": {
