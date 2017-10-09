@@ -1,18 +1,51 @@
 <?php
 use XB\theory\Shoot;
 
-$this->trigger(function(){
-    return $this->update->message->text=='hi test';
-},function(){
-    $send=new XB\telegramMethods\sendMessage([
-        'chat_id'=>$this->update->message->chat->id,
-        'text'=>'<b>test success.</b>',
-        'parse_mode'=>'html',
-    ]);
-    $send() or print 'error:'.$send->getError();
-});
 
-$this->trigger(function(){return true;},'sayHello');
+
+if(!empty($this->update->message->text) && !empty($this->update->message->from)){
+    
+        $this->trigger(function(){
+        return $this->update->message->text == '/start';
+       },'sayHello');
+
+
+        $this->trigger(function(){
+        return $this->update->message->text == 'فروشگاه';
+       },'Categories@index');
+
+        $this->trigger(function(){
+        return $this->update->message->text == 'بلاگ';
+       },'Blog');
+    
+       $this->trigger(function(){
+        return $this->update->message->text == 'تماس با ما';
+       },'Blog');   
+
+       $this->trigger(function(){
+        return $this->update->message->text == 'درباره ما';
+       },'Blog');
+}
+
+
+if($this->detect->type == "callback_query"){
+
+    $callback_data = json_decode($this->update->callback_query->data);
+
+    if(!empty($callback_data->class) && !empty($callback_data->method)){
+
+        $this->trigger(function(){return true;}
+        ,$callback_data->class."@".$callback_data->method);
+
+    }
+
+}
+
+
+
+// $this->trigger(function(){return true;},'sayHello');
+ 
+
 
 $this->trigger(function($u){
     return !empty($u->message->text) && $u->message->text=='get file';
