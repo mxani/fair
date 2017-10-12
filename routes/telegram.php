@@ -28,17 +28,8 @@ if(!empty($this->update->message->text) && !empty($this->update->message->from))
 }
 
 
-if($this->detect->type == "callback_query"){
-
-    $callback_data = json_decode($this->update->callback_query->data);
-
-    if(!empty($callback_data->class) && !empty($callback_data->method)){
-
-        $this->trigger(function(){return true;}
-        ,$callback_data->class."@".$callback_data->method);
-
-    }
-
+if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
+   $this->trigger(function(){return true;},$this->detect->data->goto);
 }
 
 
