@@ -14,28 +14,11 @@ class Categories extends Magazine{
 
         foreach($categories->toArray() as $category){
            $callback = [
-                "id"=>(string)$category['id'],
-                "class"=>"Products",
-                "method"=>"index"
+                "cat"=>(string)$category['id'],
+                "goto"=>"Products@index"
             ]; 
            array_push($cat_names,[['text'=>$category['name'],"callback_data"=> json_encode($callback)]]);
         }
-
-        
-        $replyMarkup000000 = [
-            'inline_keyboard' => [
-                [
-                    [
-                        "text"=> "A",
-                        "callback_data"=> "A1"            
-                    ], 
-                    [
-                        "text"=> "B",
-                        "callback_data"=> "C1"            
-                    ]
-                ]
-            ]
-        ];
         
 
         $replyMarkup = [
@@ -47,7 +30,7 @@ class Categories extends Magazine{
 
 //  dd($encodedMarkup);
         $send=new sendMessage([
-            'chat_id'=>$this->update->message->chat->id,
+            'chat_id'=>$this->detect->from->id,
             'text'=>"لطفا یک دسته انتخاب کنید.",
             'parse_mode'=>'html',
             'reply_markup'=>$encodedMarkup

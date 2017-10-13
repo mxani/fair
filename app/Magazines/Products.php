@@ -6,39 +6,39 @@ use XB\theory\Magazine;
 use App\Model\Category;
 use App\Model\Product;
 use XB\telegramMethods\sendMessage;
+use XB\telegramMethods\editMessageText;
 
 class Products extends Magazine{
     public function index(){
-        $callback = json_decode($this->update->callback_query->data);
-        $category = Category::find($callback->id);
+        $message=['chat_id'=>$this->update->callback_query->from->id,
+        'message_id'=>$this->update->callback_query->message->message_id,'parse_mode'=>'html'];
 
-        $product = $category->products()->first();
+        ///> validation palce is here. probably don't need to check <///
 
-     
-        $replyMarkup = [
-            'inline_keyboard' => [
-                [
-                    [
-                        "text"=> "بعدی",
-                        "callback_data"=> (int)$callback->id+1         
-                    ], 
-                    [
-                        "text"=> "قبلی",
-                        "callback_data"=> (int)$callback->id-1            
-                    ]
-                ]
-            ]
-        ];
+        $para=['cat'=>$this->detect->data->cat];
+        $category = Category::find($para['cat']);
 
-        $encodedMarkup = json_encode($replyMarkup);
+        $selected_product_id=$this->detect->data->id??false;
+        $product=null;
+        $products=$category->products();
+        if($selected_product_id){
+            $products=$products->where('products.id','<=',$selected_product_id);
+        }
+        $products=$products->orderby('id','desc')->take(2)->get();
+
+        if(!empty($products[0])){
+            $product=$products[0];
+            $back=$category->products()->where('products.id','>',$products[0]->id)->orderby('id','asc')->first();
+            $para['prev']=$back->id??null;
+        }
+        if(!empty($products[1])){
+            $para['next']=$products[1]->id;
+        }
 
 
-        $send=new sendMessage([
-            'chat_id'=>$this->update->callback_query->from->id,
-            'text'=>$product->toJson(),
-            'parse_mode'=>'html',
-            // 'reply_markup'=>$encodedMarkup
-            ]);
+        $message['text']=view('productMessage',['product'=>$product])->render();
+        $message['reply_markup']=view('productKeyboard',$para)->render();
+        $send=new editMessageText($message);
         $send();
     }
     
