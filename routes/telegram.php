@@ -28,12 +28,6 @@ if(!empty($this->update->message->text) && !empty($this->update->message->from))
 }
 
 
-if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
-   $this->trigger(function(){return true;},$this->detect->data->goto);
-}
-
-
-
 // $this->trigger(function(){return true;},'sayHello');
  
 

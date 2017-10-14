@@ -5,8 +5,7 @@
         @isset($next)
             {
                 "text":"بعدی",
-                "callback_data":"{!! addslashes(json_encode([
-                    "goto"=>"Products@index","cat"=>$cat,"id"=>$next]))!!}"
+                "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$next])!!}"
             }
         @endisset
         @if(isset($next)&&isset($prev))
@@ -15,8 +14,7 @@
         @isset($prev)
             {
                 "text":"قبلی",
-                "callback_data":"{!! addslashes(json_encode([
-                    "goto"=>"Products@index","cat"=>$cat,"id"=>$prev]))!!}"
+                "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$prev])!!}"
             }
         @endisset
         ],
@@ -24,7 +22,7 @@
         [
             {
                 "text":"نمایش دسته ها",
-                "callback_data":"{!! addslashes('{"goto":"Categories@index"}') !!}"
+                "callback_data":"{{"goto:Categories@index"}}"
             }
         ]
     ]
