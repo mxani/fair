@@ -1,9 +1,20 @@
 @if(!empty($product))
-yes ok
+    Title: <b>{{$product->title}}</b>
 
-{{$product->id}}
+    Price : <b>{{$product->price}}</b>
 
-ok!!
+    <b>Description :</b>
+    <pre>{{$product->description}}</pre>
+
+    <?php
+    //foreach($product->files as $file)
+    //endforeach
+    ?>
+    
+    <b>product_image</b>
+    <a href="{{$product->files[0]}}">&#8205;</a>
+
+
 @else
-empty
+    empty
 @endif

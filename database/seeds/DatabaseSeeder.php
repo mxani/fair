@@ -15,11 +15,13 @@ class DatabaseSeeder extends Seeder
         echo "\n> Category seeder";
         factory( App\Model\Category::class, 15 )->create();
         
-        echo "\n> Product seeder";
-		factory( App\Model\Product::class, 50 )->create();
+        for ($a = 0; $a<50; $a++) {
+            $this->call('productSeeder');
+        }
         
         echo "\n> ProductCategroy seeder";
 		factory( App\Model\ProductCategory::class, 50 )->create();
 
+        
     }
 }
