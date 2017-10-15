@@ -15,8 +15,8 @@ class Products extends Magazine{
 
         ///> validation palce is here. probably don't need to check <///
 
-        $para=['cat'=>$this->detect->data->cat];
-        $category = Category::find($para['cat']);
+        $keyBpara=['cat'=>$this->detect->data->cat];
+        $category = Category::find($keyBpara['cat']);
 
         $selected_product_id=$this->detect->data->id??false;
         $product=null;
@@ -28,16 +28,21 @@ class Products extends Magazine{
 
         if(!empty($products[0])){
             $product=$products[0];
+            $keyBpara['flow']=$product->id;
+            $pic=$this->detect->data->pic??0;
+            $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
+            $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
+            
             $back=$category->products()->where('products.id','>',$products[0]->id)->orderby('id','asc')->first();
-            $para['prev']=$back->id??null;
+            $keyBpara['prev']=$back->id??null;
         }
         if(!empty($products[1])){
-            $para['next']=$products[1]->id;
+            $keyBpara['next']=$products[1]->id;
         }
 
 
-        $message['text']=view('productMessage',['product'=>$product])->render();
-        $message['reply_markup']=view('productKeyboard',$para)->render();
+        $message['text']=view('productMessage',['product'=>$product,'pic'=>$pic])->render();
+        $message['reply_markup']=view('productKeyboard',$keyBpara)->render();
         $send=new editMessageText($message);
         $send();
     }
