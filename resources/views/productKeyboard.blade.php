@@ -1,10 +1,29 @@
 {
     "inline_keyboard":[
+    @if(isset($nextpic)||isset($prevpic))
+        [
+        @isset($nextpic)
+            {
+                "text":"تصویر بعدی",
+                "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$flow,"pic"=>$nextpic])!!}"
+            }
+        @endisset
+        @if(isset($nextpic)&&isset($prevpic))
+        ,
+        @endif
+        @isset($prevpic)
+            {
+                "text":"تصویر قبلی",
+                "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$flow,"pic"=>$prevpic])!!}"
+            }
+        @endisset
+        ],
+    @endif
     @if(isset($next)||isset($prev))
         [
         @isset($next)
             {
-                "text":"بعدی",
+                "text":"محصول بعدی",
                 "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$next])!!}"
             }
         @endisset
@@ -13,7 +32,7 @@
         @endif
         @isset($prev)
             {
-                "text":"قبلی",
+                "text":"محصول قبلی",
                 "callback_data":"{!! interlink(["goto"=>"Products@index","cat"=>$cat,"id"=>$prev])!!}"
             }
         @endisset

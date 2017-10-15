@@ -12,7 +12,7 @@
     ?>
     
     <b>product_image</b>
-    <a href="{{$product->files[0]}}">&#8205;</a>
+    <a href="{{$product->files[$pic]}}">&#8205;</a>
 
 
 @else
