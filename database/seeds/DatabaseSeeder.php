@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
         echo "\n> ProductCategroy seeder";
         factory( App\Model\ProductCategory::class, 50 )->create();
 
-        for ($p = 0; $p<50; $p++) {
+        // for ($p = 0; $p<50; $p++) {
             $this->call('postSeeder');
-        }
+        // }
     }
 }

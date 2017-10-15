@@ -12,13 +12,25 @@ class postSeeder extends Seeder
     public function run()
     {
         $faker = \Faker\Factory::create('fa_IR');
-        $types =['blog','page'];            
-        DB::table('posts')->insert([
-            'title' => $faker->word,
-            'thumb' => $faker->imageurl,
-            'content' => $faker->paragraph,
-            'type' => $types[rand(0,count($types)-1)],
-            'status' => true,
-        ]);
+       
+        for ($p = 0; $p<50; $p++) {
+            
+            if($p < 2){
+                $type = 'page';
+                $title = $p < 1 ? 'درباره ما' : 'تماس با ما';
+            }else{
+                $type = 'blog';
+                $title = $faker->title;
+            }
+            
+            DB::table('posts')->insert([
+                'title' => $title,
+                'thumb' => $faker->imageurl,
+                'content' => $faker->realtext,
+                'type' => $type,
+                'status' => true,
+            ]);
+        }
+        
     }
 }
