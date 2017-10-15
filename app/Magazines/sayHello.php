@@ -8,30 +8,25 @@ use XB\telegramMethods\sendMessage;
 class sayHello extends Magazine{
     public function main(){
 
-        $replyMarkup = array(
-            'keyboard' => array(
-                array(
-                    ['text'=>'بلاگ'],
-                    ['text'=>'فروشگاه']
-                ),
-                array(
-                    ['text'=>'درباره ما'],
-                    ['text'=>'تماس با ما']
-                )
-            ),
-            'resize_keyboard'=> true,
-            'one_time_keyboard'=> true,
-        );
-        $encodedMarkup = json_encode($replyMarkup);
+        $send=new sendMessage([
+            'chat_id'=>$this->update->message->chat->id,
+            'text'=>view('welcomeMessage')->render(),
+            'parse_mode'=>'html'
+        ]);
+        $send();
+        $this->mainMenu();
+
+    }
+
+    public function mainMenu(){
 
         $send=new sendMessage([
             'chat_id'=>$this->update->message->chat->id,
-            'text'=>"===========\nHELLO. 🤝\n===========",
+            'text'=>view('defaultMessage')->render(),
             'parse_mode'=>'html',
-            'reply_markup'=>$encodedMarkup
+            'reply_markup'=>view('mainMenu')->render()
         ]);
         $send();
     }
-    
 
 }

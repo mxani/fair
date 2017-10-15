@@ -28,4 +28,4 @@ if($this->detect->type=='message'){
 }
 
 
-$this->trigger('default','sayHello');
+$this->trigger('default','sayHello@mainMenu');
