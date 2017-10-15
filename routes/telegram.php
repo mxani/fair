@@ -16,15 +16,15 @@ if($this->detect->type=='message'){
 
         $this->trigger(function(){
         return $this->update->message->text == 'بلاگ';
-       },'Blog');
+       },'Posts');
     
        $this->trigger(function(){
         return $this->update->message->text == 'تماس با ما';
-       },'Blog');   
+       },'Posts@show');   
 
        $this->trigger(function(){
         return $this->update->message->text == 'درباره ما';
-       },'Blog');
+       },'Posts@show');
 }
 
 
