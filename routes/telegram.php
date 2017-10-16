@@ -1,7 +1,10 @@
 <?php
 use XB\theory\Shoot;
 
-
+if(empty($this->detect->tenant)){
+        require_once('master.php');
+        return;
+}
 
 if($this->detect->type=='message'){
     
