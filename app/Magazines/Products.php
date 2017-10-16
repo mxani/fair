@@ -19,7 +19,7 @@ class Products extends Magazine{
         $category = Category::find($keyBpara['cat']);
 
         $selected_product_id=$this->detect->data->id??false;
-        $product=null;
+        $pic=$product=null;
         $products=$category->products();
         if($selected_product_id){
             $products=$products->where('products.id','<=',$selected_product_id);
