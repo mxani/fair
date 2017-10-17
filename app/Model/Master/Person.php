@@ -2,6 +2,7 @@
 
 namespace App\Model\Master;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Person extends Model

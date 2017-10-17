@@ -17,7 +17,7 @@ class CreatePeopleTable extends Migration
             $table->increments('id');
             $table->bigInteger( 'telegramID' );
             $table->json( 'detail' )->nullable();
-            $table->string( 'type' )->default('geust');
+            $table->string( 'type' )->default('guest');
             $table->string( 'status' )->default( 'limit' );
             $table->timestamps();
             $table->softDeletes();
