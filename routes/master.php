@@ -1,6 +1,6 @@
 <?php
 
-$person=\App\Model\Master\Person::where('telegramID',$this->detect->from->id)->first();
+$person=\App\Model\Person::where('telegramID',$this->detect->from->id)->first();
 
 if(empty($person)){
     $this->trigger('default','mstGreet');
