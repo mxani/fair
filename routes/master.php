@@ -3,7 +3,7 @@
 $person=\App\Model\Person::where('telegramID',$this->detect->from->id)->first();
 
 if(empty($person)){
-    $this->trigger('default','mstGreet');
+    $this->trigger('default','Master\Greet');
     return;
 }elseif($person->type=='tenant'){
 
@@ -13,5 +13,4 @@ if(empty($person)){
     return;
 }
 
-
-$this->trigger('default','mstGreet@mainMenu');
+$this->trigger('default','Master\Greet@mainMenu');
