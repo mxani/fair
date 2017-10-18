@@ -4,7 +4,7 @@ namespace App\Magazines;
 
 use XB\theory\Magazine;
 use XB\telegramMethods\sendMessage;
-use App\Model\Master\Person;
+use App\Model\Person;
 
 class mstGreet extends Magazine{
     public function main(){

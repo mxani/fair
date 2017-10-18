@@ -4,9 +4,18 @@ namespace App\Magazines;
 
 use XB\theory\Magazine;
 use XB\telegramMethods\sendMessage;
+use App\Model\Person;
 
 class sayHello extends Magazine{
     public function main(){
+        $person= new Person();
+        $person->telegramID=$this->detect->from->id;
+        $person->detail=[
+            'first_name'=>$this->detect->from->first_name,
+            'last_name'=>$this->detect->from->last_name??'-',
+            'username'=>$this->detect->from->username??'-',
+        ];
+        $person->save();
 
         $send=new sendMessage([
             'chat_id'=>$this->update->message->chat->id,
