@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Magazines\Master;
+namespace App\Magazines;
 
 use XB\theory\Magazine;
 use XB\telegramMethods\sendMessage;
 use App\Model\Person;
 
-class Greet extends Magazine{
+class mstGreet extends Magazine{
     public function main(){
 
         $person= new Person();
