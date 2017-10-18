@@ -13,7 +13,7 @@ if ($this->detect->type=='message') {
 
 
         $this->trigger(function () {
-            return $this->update->message->text == 'فروشگاه';
+            return $this->update->message->text == 'نمایش محصولات';
         }, 'Categories@index');
 
         $this->trigger(function () {
