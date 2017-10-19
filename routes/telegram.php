@@ -6,8 +6,8 @@ if (empty($this->detect->tenant)) {
         return;
 }
 
-if($this->detect->type=='inline_query'){
-    $this->trigger('default','Suggest');
+if ($this->detect->type=='inline_query') {
+    $this->trigger('default', 'Suggest');
     return;
 }
 
@@ -38,17 +38,38 @@ if (empty($this->meet['mod']) || $this->meet['mod'] != 'admin') {
     }
 }
 
+
 if ($this->detect->type=='message' && $this->detect->from->id == config('owner_id')) {
+    
     if ($this->update->message->text == '*admin' || $this->update->message->text == '*مدیریت') {
-        $this->meet['mod'] = 'admin';
-        // log in
-        // show admin menu
-        $this->trigger(function () { return true;}, 'sayHello@adminMenu');
+        $this->meet['mod'] = 'admin';// logged in
     }
-                
-    if ($this->update->message->text == '*exit' || $this->update->message->text == '*خروج') {
-        $this->meet['mod']='';
-        // log out
+    
+    if ($this->meet['mod'] == 'admin') {// is admin
+
+        if (!empty($this->meet['section']) && $this->update->message->text) {
+
+            //check section
+            switch( $this->meet['section']['name'] ){
+                case 'editCat': $this->share['route']= 'adminCategories@update'; break;
+                case 'newCat': $this->share['route']= 'adminCategories@store'; break;
+            }            
+            $this->trigger('default', $this->share['route']);
+            return;
+        }
+
+        switch($this->update->message->text){
+            case 'مدیریت دسته ها': $this->share['route']= 'adminCategories@index'; break;
+            case 'مدیریت محصولات': $this->share['route']= 'adminProducts@index'; break;
+            case 'مدیریت مطالب': $this->share['route']= 'adminPosts@index'; break;
+            case 'مدیریت گزارشات': $this->share['route']= 'adminReports@index'; break;
+            case 'اطلاع رسانی': $this->share['route']= 'adminNotices@index'; break;
+            case 'خروج از مدیریت': $this->share['route']= 'adminPanel@logout'; break;
+            default : $this->share['route']='sayHello@adminMenu'; break;
+        }
+        $this->trigger('default', $this->share['route']);
+
+        return;
     }
 }
 
