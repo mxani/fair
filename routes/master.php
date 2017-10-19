@@ -1,5 +1,10 @@
 <?php
 
+if($this->detect->type=='inline_query'){
+    $this->trigger('default','mstSuggest');
+    return;
+}
+
 $person=\App\Model\Person::where('telegramID',$this->detect->from->id)->first();
 
 if(empty($person)){

@@ -22,6 +22,10 @@
     @if(1)
         [
             {
+                "text":"پیشنهاد به دوستان",
+                "switch_inline_query":"{{$flow}}"
+            },
+            {
                 "text":"سفارش",
                 "callback_data":"{!! interlink(["goto"=>"newOrde"])!!}"
             }
