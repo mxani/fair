@@ -5,7 +5,10 @@ $person=\App\Model\Person::where('telegramID',$this->detect->from->id)->first();
 if(empty($person)){
     $this->trigger('default','mstGreet');
     return;
-}elseif($person->type=='tenant'){
+}
+
+$this->share['person']=$person;
+if($person->type=='tenant'){
 
     return;
 }elseif($person->type=='personnel'){
