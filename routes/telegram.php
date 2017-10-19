@@ -6,6 +6,11 @@ if (empty($this->detect->tenant)) {
         return;
 }
 
+if($this->detect->type=='inline_query'){
+    $this->trigger('default','Suggest');
+    return;
+}
+
 if (empty($this->meet['mod']) || $this->meet['mod'] != 'admin') {
     ## customer
 

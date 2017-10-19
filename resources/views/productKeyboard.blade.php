@@ -19,6 +19,12 @@
         @endisset
         ],
     @endif
+        [
+            {
+                "text":"پیشنهاد به دوستان",
+                "switch_inline_query":"Product-{{$flow}}"
+            }
+        ],
     @if(isset($next)||isset($prev))
         [
         @isset($next)
