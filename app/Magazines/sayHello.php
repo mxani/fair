@@ -35,7 +35,9 @@ class sayHello extends Magazine
     }
 
     public function adminMenu(){
-        $message = ['type'=>'text','value'=>'welcome to admin panel'];
+        // $admin = $this->update->message->from->first_name ?? 'کاربر';
+        // $message = ['type'=>'text','value'=> $admin.'عزیز، به بخش مدیریت خوش آمدید '];
+        $message = ['type'=>'text','value'=> 'لطفا یکی از <code>گزینه ها</code> را انتخاب کنید.'];
         $this->showMenu($message,'admin.adminMenu');
     }
 
