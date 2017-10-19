@@ -16,6 +16,7 @@ class mstGreet extends Magazine{
             'first_name'=>$this->detect->from->first_name,
             'last_name'=>$this->detect->from->last_name??'-',
             'username'=>$this->detect->from->username??'-',
+            'is_bot'=>$this->detect->from->is_bot??'-',
             'deeplink'=>$this->detect->type=='message' && substr($this->update->message->text,0,6)=='/start'?
                 substr($this->update->message->text,7):false,
         ];
