@@ -28,5 +28,9 @@ class Product extends Model
         return $this->belongsToMany(Person::class,'orders')->
         withPivot('detail','status','paid_at');
     }
+	
+	public function Tenants(){
+		return $this->hasManyThrough(Master\Tenant::class,Master\Order::class);
+	}
 
 }

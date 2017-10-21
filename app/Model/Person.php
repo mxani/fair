@@ -22,4 +22,8 @@ class Person extends Model
         withPivot('detail','status','paid_at');
     }
 
+    public function Tenants(){
+        return $this->hasManyThrough(Master\Tenant::class,Master\Order::class);
+    }
+
 }

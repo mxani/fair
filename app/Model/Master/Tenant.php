@@ -5,7 +5,7 @@ namespace App\Model\Master;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Order extends Model
+class Tenant extends Model
 {
     use SoftDeletes;
     protected $fillable = [ 'person_id','product_id','price'];
@@ -13,16 +13,8 @@ class Order extends Model
     protected $hidden = [ 'updated_at', 'deleted_at' ];
     protected $casts = ['detail' => 'array'];
 
-    public function Person(){
-        return $this->belongsTo(\Person::class);
-    }
-    
-    public function Product(){
-        return $this->belongsTo(\Product::class);
-    }
-
-    public function Tenant(){
-        return $this->hasOne(Tenant::class);
+    public function Order(){
+        return $this->belongsTo(Order::class);
     }
     
 }
