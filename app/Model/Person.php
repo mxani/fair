@@ -12,4 +12,14 @@ class Person extends Model
     protected $dates = [ 'created_at', 'updated_at', 'deleted_at' ];
     protected $hidden = [ 'updated_at', 'deleted_at' ];
     protected $casts = ['detail' => 'array'];
+
+    public function Orders(){
+        return $this->hasMany(Master\Order::class);
+    }
+
+    public function Products(){
+        return $this->belongsToMany(Product::class,'orders')->
+        withPivot('detail','status','paid_at');
+    }
+
 }

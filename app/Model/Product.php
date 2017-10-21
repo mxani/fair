@@ -19,4 +19,14 @@ class Product extends Model
 	public function category() {
 		return $this->belongsToMany( Category::class, 'product_categories', 'product_id', 'cat_id' )->withTimestamps();
 	}
+
+    public function Orders(){
+        return $this->hasMany(Master\Order::class);
+    }
+
+    public function Persons(){
+        return $this->belongsToMany(Person::class,'orders')->
+        withPivot('detail','status','paid_at');
+    }
+
 }
