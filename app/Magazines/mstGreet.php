@@ -42,5 +42,10 @@ class mstGreet extends Magazine{
         ]);
         $send();
     }
+    
+    public function reset(){
+        $this->meet=[];
+        $this->mainMenu();
+    }
 
 }

@@ -42,4 +42,17 @@ if(!empty($this->update->message->text)){
     }, 'Posts@showPage');
 }
 
+if(!empty($this->meet['getContact'])){
+    if($this->detect->msgtype=='contact'){
+        $this->trigger('default','request@contactSave');
+        return;
+    }
+    if($this->detect->msgtype=='text'&&$this->update->message->text == 'انصراف'){
+        $this->trigger('default','mstGreet@reset');
+        return;
+    }
+    $this->trigger('default','request@contact');
+    return;
+}
+
 $this->trigger('default','mstGreet@mainMenu');
