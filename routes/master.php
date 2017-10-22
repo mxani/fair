@@ -1,5 +1,8 @@
 <?php
 
+// $this->trigger('default','test');
+// return;
+
 if($this->detect->type=='inline_query'){
     $this->trigger('default','mstSuggest');
     return;
