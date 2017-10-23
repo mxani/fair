@@ -17,7 +17,7 @@ class adminCategories extends Magazine
         $categories = Category::get(['name','id'])->toarray();
 
         $msg_text =  $this->text."لطفا یک دسته برای <code>ویرایش</code> انتخاب کنید.";
-        $msg_reply_markup = view('admin.categoryKeyboard', ['items'=>$categories])->render();
+        $msg_reply_markup = view('admin.categoryKeyboard', ['goto'=>"adminCategories@show",'items'=>$categories])->render();
         $this->my_sendMessage($msg_text, $msg_reply_markup);
     }
 
@@ -83,7 +83,7 @@ class adminCategories extends Magazine
 
     public function update()
     {
-        $category = Category::find($this->meet['state']['id']);
+        $category = Category::find($this->meet['section']['id']);
         $category->name = $this->update->message->text;
         if ($category->update()) {
             unset($this->meet['section']);

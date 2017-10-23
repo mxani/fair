@@ -2,10 +2,10 @@
 
 return [
     'bot-url'=>'https://api.telegram.org/bot',
-    'bot-token'=>'447848342:AAHi150t8E6HgqejcDxv10UtKOYAb6SSw_Q',
-    'bot-username'=>'botesterbot',
+    'bot-token'=>'448314040:AAEk7o1F_VMgQ3T2MQMeysio8UK6VFu9Q_Y',
+    'bot-username'=>'skydt_test_bot',
     'meeting-storage'=>'file',
-    'callbackQueryJsonFormat'=>true,
+    'callbackQuery_autoTrigge'=>true,
 
 
     ///> tenant area
