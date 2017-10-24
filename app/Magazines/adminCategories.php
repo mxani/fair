@@ -25,7 +25,7 @@ class adminCategories extends Magazine
     {
         $category = Category::where('id', $this->detect->data->cat_id)->first()->toArray();
         $msg_text =  "نام دسته :  <code>".$category['name']."</code>";
-        $msg_reply_markup = view('admin.categoryEditKeyboard', ['category'=>$category,'backToList'=>true])->render();
+        $msg_reply_markup = view('admin.categoryKeyboard', ['category'=>$category['id'],'backToList'=>true,'mode'=>'editKB'])->render();
         $this->my_sendMessage($msg_text, $msg_reply_markup);
     }
 
