@@ -8,7 +8,7 @@ use App\Model\Person;
 
 class request extends Magazine{
     public function contact(){
-        $this->meet['getContact']=1;
+        $this->meet['request']['getContact']=1;
         $send=new sendMessage([
             'chat_id'=>$this->detect->chat->id??$this->detect->from->id,
             'text'=>"برای ادامه فرآیند, داشتن شماره تلفن همراه شما الزامی میباشد.\nشماره تلفن شما قبلن ثبت نشده است.\nبا فشوردن دکمه زیر شماره تلفن شما بطور خودکار ثبت میشود.\nاین تضمین به شما داده میشود که شماره تلفن شما مورد هیچگونه سؤ استفاده قرار نگیرد",
@@ -23,15 +23,15 @@ class request extends Magazine{
             $this->contact();
             return;
         }
-        unset($this->meet['getContact']);
         $person=Person::where('telegramID',$this->detect->from->id)->first();
         $tmp=$person->detail;
         $tmp['phone_number']=$this->update->message->contact->phone_number;
         $person->detail=$tmp;
         $person->save();
-        $mag='App\Magazines\\'.$this->meet['ref_mag'];
-        $car=$this->meet['ref_car']??'main';
+        $mag='App\Magazines\\'.$this->meet['request']['ref_mag'];
+        $car=$this->meet['request']['ref_car']??'main';
         $this->caller($mag)->$car();
+        unset($this->meet['request']['ref_mag']);
     }
     
 }

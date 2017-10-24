@@ -32,6 +32,7 @@ class mstProducts extends Magazine{
             $pic=$this->detect->data->pic??0;
             $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
             $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
+            echo $keyBpara['orderable']=$product->orderable;
             
             $back=$category->products()->where('products.id','>',$products[0]->id)->orderby('id','asc')->first();
             $keyBpara['prev']=$back->id??null;

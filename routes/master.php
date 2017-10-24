@@ -55,4 +55,11 @@ if(!empty($this->meet['getContact'])){
     return;
 }
 
+if(!empty($this->meet['goto'])){
+    $goto=$this->meet['goto'];
+    unset($this->meet['goto']);
+    $this->trigger('default',$goto);
+    return;
+}
+
 $this->trigger('default','mstGreet@mainMenu');

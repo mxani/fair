@@ -19,18 +19,6 @@
         @endisset
         ],
     @endif
-    @if(1)
-        [
-            {
-                "text":"پیشنهاد به دوستان",
-                "switch_inline_query":"{{$flow}}"
-            },
-            {
-                "text":"سفارش",
-                "callback_data":"{!! interlink(["goto"=>"newOrde"])!!}"
-            }
-        ],
-    @endif
     @if(isset($next)||isset($prev))
         [
         @isset($next)
@@ -54,7 +42,18 @@
             {
                 "text":"نمایش دسته ها",
                 "callback_data":"{{"goto:mstCategories"}}"
+            },
+            {
+                "text":"پیشنهاد به دوستان",
+                "switch_inline_query":"{{$flow}}"
             }
+            @if($orderable)
+            ,
+            {
+                "text":"⭐️ خرید",
+                "callback_data":"{!! interlink(["goto"=>"Orders",'id'=>$flow])!!}"
+            }
+            @endif
         ]
     ]
 }
