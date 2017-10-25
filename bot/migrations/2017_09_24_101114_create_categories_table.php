@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTenantsTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateTenantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tenants', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer( 'order_id' );
-            $table->string( 'token' )->nullable();
-            $table->string( 'bot_token' )->nullable();
-            $table->json( 'detail' )->nullable();
-            $table->string( 'status' )->default( 'trial' );
-            $table->timestamp('expires_at')->nullable();            
+            $table->string('name');
+            $table->integer('parent_id')->unsigned()->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('parent_id')->references('id')->on('categories');
         });
     }
 
@@ -33,6 +31,6 @@ class CreateTenantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('categories');
     }
 }

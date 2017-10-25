@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTenantsTable extends Migration
+class CreatePeopleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateTenantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tenants', function (Blueprint $table) {
+        Schema::create('people', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer( 'order_id' );
-            $table->string( 'token' )->nullable();
-            $table->string( 'bot_token' )->nullable();
+            $table->bigInteger( 'telegramID' );
             $table->json( 'detail' )->nullable();
-            $table->string( 'status' )->default( 'trial' );
-            $table->timestamp('expires_at')->nullable();            
+            $table->string( 'type' )->default('guest');
+            $table->string( 'status' )->default( 'limit' );
             $table->timestamps();
             $table->softDeletes();
         });
@@ -33,6 +31,6 @@ class CreateTenantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('people');
     }
 }

@@ -5,6 +5,7 @@ if (empty($this->detect->tenant)) {
         require_once('master.php');
         return;
 }
+DB::purge('mysql');
 
 if ($this->detect->type=='inline_query') {
     $this->trigger('default', 'Suggest');
