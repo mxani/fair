@@ -31,7 +31,7 @@ class adminCategories extends Magazine
 
     public function add()
     {
-        $this->meet['section'] = ['name'=>'newCat'];
+        $this->meet['section'] = ['name'=>'newCat','route'=>'adminCategories@store'];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
@@ -65,7 +65,7 @@ class adminCategories extends Magazine
 
     public function edit()
     {
-        $this->meet['section'] = ['name'=>'editCat', 'id'=>$this->detect->data->cat_id];
+        $this->meet['section'] = ['name'=>'editCat','route'=>'adminCategories@update', 'id'=>$this->detect->data->cat_id];
         $category = Category::where('id', $this->detect->data->cat_id)->first()->toArray();
 
         if ($this->detect->type == 'callback_query') {

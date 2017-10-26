@@ -80,9 +80,9 @@ class adminProducts extends Magazine
     public function newPic()
     {
         if (empty($this->meet['section']['state'])) {
-            $this->meet['section'] = ['name'=>'newPic','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
+            $this->meet['section'] = ['name'=>'newPic','route'=>'adminProducts@storePic','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
         } else {
-            $this->meet['section'] = ['name'=>'newPic','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id']];
+            $this->meet['section'] = ['name'=>'newPic','route'=>'adminProducts@storePic','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id']];
         }
 
         if (!empty($this->meet['section']['id'])) {
@@ -151,7 +151,7 @@ class adminProducts extends Magazine
     ############# Edit Title #############
     public function editTitle()
     {
-        $this->meet['section'] = ['name'=>'editTitle','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
+        $this->meet['section'] = ['name'=>'editTitle','route'=>'adminProducts@updateTitle','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
@@ -185,9 +185,9 @@ class adminProducts extends Magazine
     public function editContent()
     {
         if (empty($this->meet['section']['state'] )) {
-            $this->meet['section'] = ['name'=>'editContent','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
+            $this->meet['section'] = ['name'=>'editContent','route'=>'adminProducts@updateContent','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
         } else {
-            $this->meet['section'] = ['name'=>'editContent','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
+            $this->meet['section'] = ['name'=>'editContent','route'=>'adminProducts@updateContent','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
         }
         
         $chat_id = $this->detect->from->id;
@@ -223,9 +223,9 @@ class adminProducts extends Magazine
     {
         
         if (empty($this->meet['section']['state'])) {
-            $this->meet['section'] = ['name'=>'editPrice','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
+            $this->meet['section'] = ['name'=>'editPrice','route'=>'adminProducts@updatePrice','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
         } else {
-            $this->meet['section'] = ['name'=>'editPrice','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
+            $this->meet['section'] = ['name'=>'editPrice','route'=>'adminProducts@updatePrice','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
         }
         
         $chat_id = $this->detect->from->id;
@@ -279,7 +279,7 @@ class adminProducts extends Magazine
             ]);
         $product->category()->attach($this->detect->data->cat_id);
             
-        $this->meet['section'] = ['name'=>'newProduct','id'=>$product->id, 'cat_id'=>$this->detect->data->cat_id,'state'=>'create'];
+        $this->meet['section'] = ['name'=>'newProduct','route'=>'adminProducts@updateTitle','id'=>$product->id, 'cat_id'=>$this->detect->data->cat_id,'state'=>'create'];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;

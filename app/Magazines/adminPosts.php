@@ -60,9 +60,9 @@ class adminPosts extends Magazine
     ############# Add a Picture #############
     public function newPic(){
         if (empty($this->meet['section']['state'])) {
-            $this->meet['section'] = ['name'=>'newPic','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
+            $this->meet['section'] = ['name'=>'newPic','route'=>'adminPosts@storePic','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
         } else {
-            $this->meet['section'] = ['name'=>'newPic','id'=>$this->meet['section']['id'], 'postType'=>$this->meet['section']['postType']];
+            $this->meet['section'] = ['name'=>'newPic','route'=>'adminPosts@storePic','id'=>$this->meet['section']['id'], 'postType'=>$this->meet['section']['postType']];
         }
 
         if (!empty($this->meet['section']['id'])) {
@@ -111,7 +111,7 @@ class adminPosts extends Magazine
     ############# Edit Title #############
     public function editTitle()
     {
-        $this->meet['section'] = ['name'=>'editTitle','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
+        $this->meet['section'] = ['name'=>'editTitle','route'=>'adminPosts@updateTitle','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
@@ -145,9 +145,9 @@ class adminPosts extends Magazine
     public function editContent()
     {
         if (empty($this->meet['section']['state'] )) {
-            $this->meet['section'] = ['name'=>'editContent','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
+            $this->meet['section'] = ['name'=>'editContent','route'=>'adminPosts@updateContent','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
         } else {
-            $this->meet['section'] = ['name'=>'editContent','id'=>$this->meet['section']['id'], 'postType'=>$this->meet['section']['postType'],'state'=>'create'];
+            $this->meet['section'] = ['name'=>'editContent','route'=>'adminPosts@updateContent','id'=>$this->meet['section']['id'], 'postType'=>$this->meet['section']['postType'],'state'=>'create'];
         }
         
         $chat_id = $this->detect->from->id;
@@ -199,7 +199,7 @@ class adminPosts extends Magazine
             'type' => $this->detect->data->postType,
             ]);
             
-        $this->meet['section'] = ['name'=>'newPost','id'=>$post->id, 'postType'=>$this->detect->data->postType,'state'=>'create'];
+        $this->meet['section'] = ['name'=>'newPost','route'=>'adminPosts@updateTitle','id'=>$post->id, 'postType'=>$this->detect->data->postType,'state'=>'create'];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
