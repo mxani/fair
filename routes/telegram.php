@@ -46,7 +46,7 @@ if ($this->detect->type=='message' && $this->detect->from->id == config('owner_i
         $this->meet['mod'] = 'admin';// logged in
     }
     
-    if ($this->meet['mod'] == 'admin') {// is admin
+    if ($this->meet['mod']??'' == 'admin') {// is admin
 
         if (!empty($this->meet['section'])){
             $section = $this->meet['section']['name'];
