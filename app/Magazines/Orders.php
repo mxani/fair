@@ -130,6 +130,13 @@ class Orders extends Magazine{
         \Artisan::call('migrate',['--path'=>'bot/migrations']);
         \Artisan::call('db:seed',['--class'=>'dummyDataSeeder']);
 
+        $api=new \XB\telegramMethods\setWebhook([
+            'url'=>config('XBtelegram.host')."/telegram.php?tenant=$tenant",
+            'certificate'=>base_path('certify.crt'),
+            'max_connections'=>80,
+        ]);
+        $api('certificate');
+
         config($master);
         \DB::purge('mysql');
 
