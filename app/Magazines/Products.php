@@ -9,6 +9,7 @@ use XB\telegramMethods\sendMessage;
 use XB\telegramMethods\editMessageText;
 
 class Products extends Magazine{
+    protected $text = '';
     public function index(){
         $message=['chat_id'=>$this->update->callback_query->from->id,
         'message_id'=>$this->update->callback_query->message->message_id,'parse_mode'=>'html'];
@@ -41,7 +42,10 @@ class Products extends Magazine{
         }
 
 
-        $message['text']=view('productMessage',['product'=>$product,'pic'=>$pic])->render();
+        $message['text'] = $this->text."محصولی برای نمایش وجود ندارد.";
+        if(!empty($product)){
+            $message['text']=view('productMessage',['product'=>$product,'pic'=>$pic])->render();
+        }
         $message['reply_markup']=view('productKeyboard',$keyBpara)->render();
         $send=new editMessageText($message);
         $send();

@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string( 'title' );
             $table->text( 'description' );
             $table->text( 'files' )->nullable();
-            $table->double( 'price', 10 , 2 );
+            $table->string( 'price' );
             $table->boolean( 'status' )->default( true );
             $table->timestamps();
             $table->softDeletes();

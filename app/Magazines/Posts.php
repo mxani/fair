@@ -8,7 +8,7 @@ use XB\telegramMethods\sendMessage;
 use XB\telegramMethods\editMessageText;
 
 class Posts extends Magazine{
-   
+    protected $text = '';
     public function blog(){
         $selected_id = false;
         $message=['chat_id'=>$this->detect->from->id,'parse_mode' => 'HTML'];
@@ -19,25 +19,39 @@ class Posts extends Magazine{
             $selected_id = $this->detect->data->id??false; 
         }
 
-        $posts = Post::where('status', 1)->orderby('id','desc'); 
-        if($selected_id){
-            $posts = $posts->where('id','<=',$selected_id); 
-        }
-        $posts = $posts->take(2)->get();
+        $posts = Post::where('type','blog')->where('status', 1)->orderby('id','desc');
+        $keyBpara=[];
+        if($posts->count() == 1){
+            $post = $posts->first();
+            $keyBpara['current_id']=$post->id;
+        }else{
 
-        if(!empty($posts[0])){
-            $prevPost = Post::where('id','>',$posts[0]->id)->first();
-            $kayBpara['prev'] = $prevPost->id??null;
-            $kayBpara['prev_title'] = 'قبلی : '.$posts[0]->title;
+            if($selected_id){
+                $posts = $posts->where('id','<=',$selected_id); 
+            }
+            $posts = $posts->take(2)->get();
+
+            if(!empty($posts[0])){
+                $post = $posts[0];
+                $prevPost = Post::where('type','blog')->where('id','>',$posts[0]->id)->first();
+                $keyBpara['current_id'] = $post->id;
+                $keyBpara['prev'] = $prevPost->id??null;
+                if(!empty($keyBpara['prev'])){
+                    $keyBpara['prev_title'] = 'قبلی : '.Post::where('id',$prevPost->id)->where('type','blog')->first()->title ;
+                }
+            }
+
+            if(!empty($posts[1])){
+                $keyBpara['next'] = $posts[1]->id;
+                $keyBpara['next_title'] = 'بعدی : '.$posts[1]->title;
+            }
         }
 
-        if(!empty($posts[1])){
-            $kayBpara['next'] = $posts[1]->id;
-            $kayBpara['next_title'] = 'بعدی : '.$posts[1]->title;
+        echo $message['text'] = $this->text."مطلبی برای نمایش وجود ندارد.";
+        if(!empty($post)){
+            $message['text'] = view('postMessage',['post'=>$post])->render();
         }
-
-        $message['text'] = view('postMessage',['post'=>$posts[0]])->render();
-        $message['reply_markup'] = view('postKeyboard',$kayBpara)->render();
+        $message['reply_markup'] = view('postKeyboard',$keyBpara)->render();
         (new $api($message))->call();
 
     }

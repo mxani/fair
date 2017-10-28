@@ -12,7 +12,7 @@ if ($this->detect->type=='inline_query') {
     return;
 }
 
-if ($this->detect->from->id == config('owner_id') && $this->update->message->text??'' == '*admin' || $this->update->message->text??'' == '*مدیریت') {
+if ($this->detect->from->id == config('owner_id') && ($this->update->message->text??'') == '*admin' || ($this->update->message->text??'') == '*مدیریت') {
     $this->meet['mod'] = 'admin';// logged in
 }
 

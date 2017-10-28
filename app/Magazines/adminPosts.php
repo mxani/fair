@@ -31,28 +31,39 @@ class adminPosts extends Magazine
         $keyBpara['goto'] = 'adminPosts@index';
         $keyBpara['postType'] = $postType;
 
-        $posts = Post::where('type',$postType)->where('status', 1)->orderby('id','desc'); 
-        if($selected_id){
-            $posts = $posts->where('id','<=',$selected_id); 
-        }
-        $posts = $posts->take(2)->get();
-        if(!empty($posts[0])){
-            $prevPost = Post::where('id','>',$posts[0]->id)->where('type',$postType)->first();
-            $keyBpara['current_id'] = $posts[0]->id;
-            $keyBpara['prev'] = $prevPost->id??null;
-            
-            if(!empty($keyBpara['prev'])){
-                $keyBpara['prev_title'] = 'قبلی : '.Post::where('id',$prevPost->id)->where('type',$postType)->first()->title ;
+        $posts = Post::where('type',$postType)->where('status', 1)->orderby('id','desc');
+        if($posts->count() == 1){
+            $post = $posts->first();
+            $keyBpara['current_id']=$post->id;
+        }else{
+
+            if($selected_id){
+                $posts = $posts->where('id','<=',$selected_id); 
             }
-            
+            $posts = $posts->take(2)->get();
+            if(!empty($posts[0])){
+                $post=$posts[0];
+                $prevPost = Post::where('id','>',$post->id)->where('type',$postType)->first();
+                $keyBpara['current_id'] = $post->id;
+                $keyBpara['prev'] = $prevPost->id??null;
+                
+                if(!empty($keyBpara['prev'])){
+                    $keyBpara['prev_title'] = 'قبلی : '.Post::where('id',$prevPost->id)->where('type',$postType)->first()->title ;
+                }
+                
+            }
+
+            if(!empty($posts[1])){
+                $keyBpara['next'] = $posts[1]->id;
+                $keyBpara['next_title'] = 'بعدی : '.$posts[1]->title;
+            }
         }
 
-        if(!empty($posts[1])){
-            $keyBpara['next'] = $posts[1]->id;
-            $keyBpara['next_title'] = 'بعدی : '.$posts[1]->title;
+        $content = $postType=='blog' ? 'مطلبی' : 'صفحه ای';
+        $msg_text = $this->text."$content برای نمایش وجود ندارد.";
+        if(!empty($post)){
+            $msg_text =  view('postMessage',['post'=>$post])->render();
         }
-
-        $msg_text =  view('postMessage',['post'=>$posts[0]])->render();
         $msg_reply_markup = view('admin.postKeyboard',$keyBpara)->render();
         $this->my_sendMessage($msg_text, $msg_reply_markup);
     }
@@ -129,7 +140,7 @@ class adminPosts extends Magazine
     {
         $post = Post::find($this->meet['section']['id']);
         
-        $post->title = $this->update->message->text;
+        $post->title = $this->update->message->text??$post->title;
         $post->update();
 
         if (!empty($this->meet['section']['state'] )) {
@@ -165,7 +176,7 @@ class adminPosts extends Magazine
     public function updateContent()
     {
         $post = Post::find($this->meet['section']['id']);
-        $post->content = $this->update->message->text;
+        $post->content = $this->update->message->text??$post->content;
         $post->update();
 
         if (!empty($this->meet['section']['state'] )) {
@@ -183,8 +194,9 @@ class adminPosts extends Magazine
         $post = Post::find($this->detect->data->id);
 
         if ($post->delete()) {
-            $this->text =  "محصول <code>".$post->title."</code> با موفقیت حذف شد. \n";
             $postType = $this->detect->data->postType;
+            $content = $postType=='blog' ? 'مطلب' : 'صفحه';
+            $this->text =  "$content <code>$post->title</code> با موفقیت حذف شد. \n";
             $this->index();
         }
     }

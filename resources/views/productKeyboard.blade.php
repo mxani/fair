@@ -1,5 +1,7 @@
 {
     "inline_keyboard":[
+@if(!empty ($flow))
+
     @if(isset($nextpic)||isset($prevpic))
         [
         @isset($nextpic)
@@ -19,12 +21,6 @@
         @endisset
         ],
     @endif
-        [
-            {
-                "text":"پیشنهاد به دوستان",
-                "switch_inline_query":"Product-{{$flow}}"
-            }
-        ],
     @if(isset($next)||isset($prev))
         [
         @isset($next)
@@ -44,6 +40,15 @@
         @endisset
         ],
     @endif
+
+        [
+            {
+                "text":"پیشنهاد به دوستان",
+                "switch_inline_query":"Product-{{$flow}}"
+            }
+        ],
+
+@endif
         [
             {
                 "text":"نمایش دسته ها",

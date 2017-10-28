@@ -42,10 +42,12 @@
         @else
         
             [
+                @if($category!=1)
                 {
                     "text":"❌ حذف",
                     "callback_data":"{!! interlink(["goto"=>"adminCategories@destroy","cat_id"=>$category])!!}"
                 },
+                @endif
                 {
                     "text":"📝 ویرایش",
                     "callback_data":"{!! interlink(["goto"=>"adminCategories@edit","cat_id"=>$category])!!}"

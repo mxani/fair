@@ -102,10 +102,13 @@ class adminCategories extends Magazine
                 $item->cat_id = 1;
                 $item->update();
             });
+        
+            $defaultCat = Category::find(1);
+            $this->text =  "و محصولات زیرمجموعه آن به دسته <code>$defaultCat->name</code> انتقال یافت. \n";
         }
 
         if ($category->delete()) {
-            $this->text =  "دسته <code>".$category->name."</code> با موفقیت حذف شد. \n";
+            $this->text =  "دسته <code>$category->name</code> با موفقیت حذف شد. \n".$this->text;
             $this->index();
         }
     }

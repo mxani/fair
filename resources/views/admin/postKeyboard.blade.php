@@ -1,6 +1,7 @@
 {
     "inline_keyboard":[
-    @if(isset($next) || isset($prev))
+@if(!empty($current_id))
+        @if(isset($next) || isset($prev))
         
             [
                 @isset($next)
@@ -11,10 +12,8 @@
                 @endisset
             ]
 
-            @if(isset($next) && isset($prev))
-            ,
-            @endif
             @isset($prev)
+            ,
             [
                 {
                     "text":"{!! $prev_title !!}",
@@ -23,8 +22,9 @@
             ]
             @endisset
             
-        @endif
         ,
+        @endif
+
         [
             {
                 "text":"📝 ویرایش توضیحات",
@@ -51,6 +51,7 @@
             }
         ]
         ,
+@endif        
         [
             {
                 @if($postType == 'blog')

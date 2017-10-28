@@ -31,9 +31,9 @@ class adminProducts extends Magazine
     {
 
         if (!empty($this->detect->data->cat_id)) {
-            $category_id = (int)$this->detect->data->cat_id;
+            $category_id = $this->detect->data->cat_id;
         } else {
-            $category_id =(int)$category_id;
+            $category_id = $category_id;
         }
         
         $keyBpara['cat_id'] = $category_id;
@@ -50,6 +50,15 @@ class adminProducts extends Magazine
 
         //$selected_product_id=$this->detect->data->id??false;
         $pic=$product=null;
+
+    if($category->products->count() == 1){
+            $product = $category->products->first();
+            $keyBpara['flow']=$product->id;
+            $pic=$this->detect->data->pic??0;
+            $keyBpara['pic'] = $pic;
+            $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
+            $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
+    }else{
         $products=$category->products();
         if ($selected_product_id) {
             $products=$products->where('products.id', '<=', $selected_product_id);
@@ -58,7 +67,7 @@ class adminProducts extends Magazine
         
         if (!empty($products[0])) {
             $product=$products[0];
-            $keyBpara['flow']=$product->id;
+            $keyBpara['flow']=$product->id;   
             $pic=$this->detect->data->pic??0;
             $keyBpara['pic'] = $pic;
             $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
@@ -70,8 +79,12 @@ class adminProducts extends Magazine
         if (!empty($products[1])) {
             $keyBpara['next']=$products[1]->id;
         }
+    }
 
-        $msg_text =  view('productMessage', ['product'=>$product,'pic'=>$pic])->render();
+        $msg_text = $this->text."محصولی برای نمایش وجود ندارد.";
+        if(!empty($product)){
+            $msg_text = view('productMessage', ['product'=>$product,'pic'=>$pic])->render();
+        }
         $msg_reply_markup = view('admin.productKeyboard', $keyBpara)->render();
         $this->my_sendMessage($msg_text, $msg_reply_markup);
     }
@@ -141,10 +154,24 @@ class adminProducts extends Magazine
 
         $product = Product::find($id);
         $files = $product->files;
+        
+        $lastpic = end($files);
+        $isLastPic = false;
+        if($product->files[$pic_index]  == $lastpic){
+            $isLastPic = true;
+        }
+
         unset($files[$pic_index]);
         $product->files = array_values($files);
         $product->update();
-      
+
+        if($isLastPic){
+            $files = $product->files;
+            end($files);
+            $lastpicKey = key($files);
+            $this->detect->data->pic = $lastpicKey;
+        }
+     
         $this->index();
     }
 
@@ -166,9 +193,9 @@ class adminProducts extends Magazine
         (new sendMessage($message))->call();
     }
     public function updateTitle()
-    {
+    {  
         $product = Product::find($this->meet['section']['id']);
-        $product->title = $this->update->message->text;
+        $product->title = $this->update->message->text??$product->title;
         $product->update();
 
         if (!empty($this->meet['section']['state'] )) {
@@ -205,7 +232,7 @@ class adminProducts extends Magazine
     public function updateContent()
     {
         $product = Product::find($this->meet['section']['id']);
-        $product->description = $this->update->message->text;
+        $product->description = $this->update->message->text??$product->description;
         $product->update();
 
         if (!empty($this->meet['section']['state'] )) {
@@ -243,7 +270,7 @@ class adminProducts extends Magazine
     public function updatePrice()
     {
         $product = Product::find($this->meet['section']['id']);
-        $product->price = $this->update->message->text;
+        $product->price = $this->update->message->text ?? $product->price;
         $product->update();
 
         if (!empty($this->meet['section']['state'] )) {
@@ -310,6 +337,8 @@ class adminProducts extends Magazine
             $message['reply_markup'] = $reply_markup;
         }
         (new $api($message))->call();
+
+        $this->caller(sayHello::class)->adminMenu();
     }
 
     ## getting the url of uploaded image in telegram ##

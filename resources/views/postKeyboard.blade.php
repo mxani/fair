@@ -1,5 +1,6 @@
 {
     "inline_keyboard":[
+    @if(!empty($current_id))        
         @if(isset($next) || isset($prev))
         
             [
@@ -25,5 +26,6 @@
             
             
         @endif
+    @endif
     ]
 }

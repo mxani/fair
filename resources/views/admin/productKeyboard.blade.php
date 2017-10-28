@@ -1,5 +1,6 @@
 {
     "inline_keyboard":[
+@if(!empty ($flow))   
     @if(isset($nextpic)||isset($prevpic))
         [
         @isset($nextpic)
@@ -73,7 +74,7 @@
                 "callback_data":"{!! interlink(["goto"=>'adminProducts@editPrice',"id"=>$flow,"cat_id"=>$cat_id])!!}"
             }
         ],
-
+@endif
         [
             {
                 "text":"📦 افزودن محصول جدید",
@@ -86,5 +87,5 @@
                 "callback_data":"{{"goto:adminProducts@showCats"}}"
             }
         ]
-    ]
+    ] 
 }

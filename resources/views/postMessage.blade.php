@@ -16,8 +16,4 @@
         <a href="{{$post->thumb}}">&#8205;</a>
     @endif
 
-
-
-@else
-    با عرض پوزش موردی یافت نشد!
 @endif
