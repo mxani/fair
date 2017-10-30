@@ -54,10 +54,12 @@ class Orders extends Magazine{
             return;
         }
 
-        if(!preg_match("/^\d+:\S+$/", $botToken) || false===$bot=$this->isValidToken($botToken)){
+        if(!preg_match("/\d+:\S+/", $botToken,$botToken) || false===$bot=$this->isValidToken($botToken[0])){
             $this->invalidToken();
             return;
         }
+
+        $botToken=$botToken[0];
 
         $product=Product::find($this->meet['order']['product_id']);
         if(empty($product)|| !$product->orderable){
