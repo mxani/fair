@@ -9,6 +9,9 @@ use App\Model\Product;
 use App\Model\ProductCategory;
 use XB\telegramMethods\editMessageText;
 use XB\telegramMethods\deleteMessage;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 
 class adminProducts extends Magazine
 {
@@ -55,6 +58,7 @@ class adminProducts extends Magazine
             $product = $category->products->first();
             $keyBpara['flow']=$product->id;
             $pic=$this->detect->data->pic??0;
+            $pic = empty($product->files[$pic]) ? null : $pic;
             $keyBpara['pic'] = $pic;
             $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
             $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
@@ -69,6 +73,7 @@ class adminProducts extends Magazine
             $product=$products[0];
             $keyBpara['flow']=$product->id;   
             $pic=$this->detect->data->pic??0;
+            $pic = empty($product->files[$pic]) ? null : $pic;
             $keyBpara['pic'] = $pic;
             $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
             $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
@@ -117,28 +122,30 @@ class adminProducts extends Magazine
             $file = $this->update->message->photo;
             $file = $file[count($file)-1];
             $file_id = $file->file_id;
-        } elseif (!empty($this->update->message->video)) {
-            $file = $this->update->message->video;
-            $file_id = $file->file_id;
-        } elseif (!empty($this->update->message->document)) {
-            $file = $this->update->message->document;
-            $file_id = $file->file_id;
+        }else{
+            $message['chat_id'] = $this->detect->from->id;
+            $message['text'] = "لطفا فقط یک تصویر را با در نظر گرفتن حالت <code>فشرده (compress)</code> ارسال کنید";
+            $message['parse_mode'] = 'html';
+            (new sendMessage($message))->call();
+            return;
         }
-
-        //$url = $this->get_url();
-
-        // generate fake image url
-        $faker = \Faker\Factory::create('fa_IR');
-        $fake_image = $faker->imageurl;
-        // add fake_image to product files
-        $product = Product::find($this->meet['section']['id']);
-        $current_files = [];
-        if($product->files){
-            $current_files = $product->files;
-        }
-        array_unshift($current_files, $fake_image);
-        $product->files = array_values($current_files);
-        $product->update();
+        
+        if (!empty($file_id)) {
+            $newImage = $this->get_url($file_id);
+            /*
+            // generate fake image url
+            $faker = \Faker\Factory::create('fa_IR');
+            $fake_image = $faker->imageurl;
+            */        
+            $product = Product::find($this->meet['section']['id']);
+            $current_files = [];
+            if($product->files){
+                $current_files = $product->files;
+            }
+            array_unshift($current_files, $newImage);
+            $product->files = array_values($current_files);
+            $product->update();
+        }     
 
         $category_id = $this->meet['section']['cat_id'];
         $current_pid = $this->meet['section']['id'];
@@ -338,7 +345,7 @@ class adminProducts extends Magazine
         }
         (new $api($message))->call();
 
-        $this->caller(sayHello::class)->adminMenu();
+        //$this->caller(sayHello::class)->adminMenu();
     }
 
     ## getting the url of uploaded image in telegram ##
@@ -349,7 +356,39 @@ class adminProducts extends Magazine
         if (!empty($path = $get->result->file_path)) {
             $url="https://api.telegram.org/file/bot".config('XBtelegram.bot-token')."/$path";
         }
-        
-        return $url;
+       
+        $client = new Client();
+        try{
+            $response=$client->request(
+                'POST', 
+                'http://dl.telerobotic.ir/gfftb2017.php', 
+                ['form_params' =>['fileUrl'=>$url,'tenantToken'=>$this->detect->tenant]]
+            );
+            $result = $response->getBody()->getContents();
+        } catch (ClientException $e) {
+            echo 'ClientException: '.$e->getMessage();
+            return false;
+        }catch (TransferException $e) {
+            echo 'TransferException: '.$e->getMessage();
+            return false;
+        }catch (\RuntimeException $e) {
+            echo 'RuntimeException: '.$e->getMessage();
+            return false;
+        }catch (\Exception $e) {
+            echo 'RuntimeException: '.$e->getMessage();
+            return false;
+        }
+
+        return $result;
+    }
+
+    private function generateRandomString($length=20) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

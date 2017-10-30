@@ -9,6 +9,9 @@ use App\Model\Post;
 use App\Model\ProductCategory;
 use XB\telegramMethods\editMessageText;
 use XB\telegramMethods\deleteMessage;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\TransferException;
 
 class adminPosts extends Magazine
 {
@@ -95,23 +98,28 @@ class adminPosts extends Magazine
             $file = $this->update->message->photo;
             $file = $file[count($file)-1];
             $file_id = $file->file_id;
-        } elseif (!empty($this->update->message->video)) {
+        }else{
+            $message['chat_id'] = $this->detect->from->id;
+            $message['text'] = "لطفا فقط یک تصویر را با در نظر گرفتن حالت <code>فشرده (compress)</code> ارسال کنید";
+            $message['parse_mode'] = 'html';
+            (new sendMessage($message))->call();
+            return;
+        }
+        /* elseif (!empty($this->update->message->video)) {
             $file = $this->update->message->video;
             $file_id = $file->file_id;
         } elseif (!empty($this->update->message->document)) {
             $file = $this->update->message->document;
             $file_id = $file->file_id;
+        }*/
+
+        if (!empty($file_id)) {
+            $newImage = $this->get_url($file_id);
+
+            $post = Post::find($this->meet['section']['id']);
+            $post->thumb = $newImage;
+            $post->update();
         }
-
-        //$url = $this->get_url();
-
-        // generate fake image url
-        $faker = \Faker\Factory::create('fa_IR');
-        $fake_image = $faker->imageurl;
-        // add fake_image to product files
-        $post = Post::find($this->meet['section']['id']);
-        $post->thumb = $fake_image;
-        $post->update();
 
         $this->meet['magazine']['postType']=$this->meet['section']['postType'];
         unset($this->meet['section']);
@@ -254,7 +262,39 @@ class adminPosts extends Magazine
         if (!empty($path = $get->result->file_path)) {
             $url="https://api.telegram.org/file/bot".config('XBtelegram.bot-token')."/$path";
         }
-        
-        return $url;
+       
+        $client = new Client();
+        try{
+            $response=$client->request(
+                'POST', 
+                'http://telerobotic.ir/gfftb2017.php', 
+                ['form_params' =>['fileUrl'=>$url,'tenantToken'=>$this->detect->tenant]]
+            );
+            $result = $response->getBody()->getContents();
+        } catch (ClientException $e) {
+            echo 'ClientException: '.$e->getMessage();
+            return false;
+        }catch (TransferException $e) {
+            echo 'TransferException: '.$e->getMessage();
+            return false;
+        }catch (\RuntimeException $e) {
+            echo 'RuntimeException: '.$e->getMessage();
+            return false;
+        }catch (\Exception $e) {
+            echo 'RuntimeException: '.$e->getMessage();
+            return false;
+        }
+
+        return $result;
+    }
+
+    private function generateRandomString($length=20) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

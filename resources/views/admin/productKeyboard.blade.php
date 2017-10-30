@@ -45,7 +45,7 @@
                 "text":"➕ افزودن تصویر جدید",
                 "callback_data":"{!! interlink(["goto"=>'adminProducts@newPic',"cat_id"=>$cat_id,"id"=>$flow])!!}"
             }
-           @if(!is_null($pic))
+           @if(@isset($pic))
             ,
             {
                 "text":"❌ حذف تصویر فعلی",
