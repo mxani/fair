@@ -169,6 +169,8 @@ class Orders extends Magazine{
 
         config($master);
         \DB::purge('mysql');
+        
+        unset($this->meet['goto']);
 
         $message['text']=view('master.greetBotMessage',$bot)->render();
         $send=new sendMessage($message);
