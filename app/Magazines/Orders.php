@@ -112,6 +112,8 @@ class Orders extends Magazine{
         $tenant->bot_token=$botToken;
         $tenant->token=$tenantToken;
         $tenant->detail=$bot;
+        $tenant->status='trial';
+        $tenant->expires_at=\Carbon\Carbon::now()->adddays(14);
         $tenant->save();
 
         $pass=str_random(20);
@@ -129,6 +131,8 @@ class Orders extends Magazine{
 
         $configs="
             'owner_id'=>{$this->detect->from->id},
+            'status'=>'trial',
+            'expires_at'=>'{$tenant->expires_at}',
             'XBtelegram.bot-token'=>'$botToken',
             'XBtelegram.bot-username'=>'{$bot['username']}',
             'database.connections.mysql.database'=>'tenant_{$tenant->id}_db',
