@@ -16,7 +16,16 @@ if(empty($person)){
 }
 
 $this->share['person']=$person;
-if($person->type=='tenant'){
+$this->trigger('default','mstGreet@mainMenu');
+
+if(!empty($this->meet['goto'])){
+    $goto=$this->meet['goto'];
+    unset($this->meet['goto']);
+    $this->trigger('default',$goto);
+    return;
+}
+
+if($person->type=='customer'){
 
     return;
 }elseif($person->type=='personnel'){
@@ -54,12 +63,3 @@ if(!empty($this->meet['getContact'])){
     $this->trigger('default','request@contact');
     return;
 }
-
-if(!empty($this->meet['goto'])){
-    $goto=$this->meet['goto'];
-    unset($this->meet['goto']);
-    $this->trigger('default',$goto);
-    return;
-}
-
-$this->trigger('default','mstGreet@mainMenu');

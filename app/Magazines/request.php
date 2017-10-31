@@ -42,10 +42,11 @@ class request extends Magazine{
             $this->invalidContact();
             return;
         }
-        $person=Person::where('telegramID',$this->detect->from->id)->first();
+        $person=$this->share['person'];
         $tmp=$person->detail;
         $tmp['phone_number']=$this->update->message->contact->phone_number;
         $person->detail=$tmp;
+        $person->type='customer';
         $person->save();
         $mag='App\Magazines\\'.$this->meet['request']['ref_mag'];
         $car=$this->meet['request']['ref_car']??'main';

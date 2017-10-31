@@ -1,5 +1,12 @@
 {
     "keyboard": [
+        @if(!empty($customer))
+        [
+            {
+                "text":"روباتهای من"
+            }
+        ],
+        @endif
         [
             {
                 "text": "بلاگ"

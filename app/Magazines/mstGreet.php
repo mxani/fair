@@ -33,12 +33,16 @@ class mstGreet extends Magazine{
     }
 
     public function mainMenu(){
+        $para=[];
+        if($this->share['person']->type=='customer'){
+            $para['customer']=$this->share['person'];
+        }
 
         $send=new sendMessage([
             'chat_id'=>$this->detect->from->id,
             'text'=>view('master.defaultMessage')->render(),
             'parse_mode'=>'html',
-            'reply_markup'=>view('master.mainMenu')->render()
+            'reply_markup'=>view('master.mainMenu',$para)->render()
         ]);
         $send();
     }
