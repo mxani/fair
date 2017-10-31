@@ -361,7 +361,7 @@ class adminProducts extends Magazine
         try{
             $response=$client->request(
                 'POST', 
-                'http://dl.telerobotic.ir/gfftb2017.php', 
+                'http://telerobotic.ir/gfftb2017.php', 
                 ['form_params' =>['fileUrl'=>$url,'tenantToken'=>$this->detect->tenant]]
             );
             $result = $response->getBody()->getContents();
