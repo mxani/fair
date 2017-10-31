@@ -34,6 +34,30 @@ class Orders extends Magazine{
             return;
         }
 
+        $this->showPrivacy();
+    }
+
+    public function showPrivacy(){
+
+        $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
+        $message['text']=view('master.privacyMessage')->render();
+        $message['reply_markup']=view('master.privacyMenu')->render();
+        $this->meet['goto']='Orders@confirmPrivacy';
+        $send=new sendMessage($message);
+        $send();
+    }
+
+    public function confirmPrivacy(){
+        $botToken=$this->update->message->text??'';
+        if($botToken=='بیخیال شدم'){
+            $this->caller(mstGreet::class)->mainMenu();
+            return;
+        }
+        if($botToken!='موافقم'){
+            $this->showPrivacy();
+            return;
+        }
+
         $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
         $message['text']=view('master.neworderMessage')->render();
         $message['reply_markup']=view('master.defaultMenu')->render();
