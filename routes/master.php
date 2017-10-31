@@ -26,7 +26,19 @@ if(!empty($this->meet['goto'])){
 }
 
 if($person->type=='customer'){
+    $binds=[
+        'محصولات'=>'mstCategories',
+        'بلاگ'=>'Posts@blog',
+        'روباتهای من'=>'myBots',
+    ];
 
+    $post=App\Model\Post::where('title', $this->update->message->text)->where('type','page')->where('status', 1)->first();
+    if (!empty($post)) {
+            $this->share['post']=$post;
+            $binds[$post->title]='Posts@showPage';
+    }
+
+    $this->trigger('default',$binds[$this->update->message->text]??'mstGreet@mainMenu');
     return;
 }elseif($person->type=='personnel'){
 
@@ -49,17 +61,4 @@ if(!empty($this->update->message->text)){
                     return true;
             }
     }, 'Posts@showPage');
-}
-
-if(!empty($this->meet['getContact'])){
-    if($this->detect->msgtype=='contact'){
-        $this->trigger('default','request@contactSave');
-        return;
-    }
-    if($this->detect->msgtype=='text'&&$this->update->message->text == 'انصراف'){
-        $this->trigger('default','mstGreet@reset');
-        return;
-    }
-    $this->trigger('default','request@contact');
-    return;
 }
