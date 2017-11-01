@@ -15,7 +15,7 @@ class myBots extends Magazine{
             'chat_id'=>$this->update->message->chat->id,
             'text'=>view('master.myBotsMessage',$para)->render(),
             'parse_mode'=>'html',
-            'reply_markup'=>view('master.myBotsKeyboard',['items'=>$items])->render(),
+            'reply_markup'=>view('master.myBotsKeyboard',['items'=>$items->toArray()])->render(),
             ]);
         $send();
     }

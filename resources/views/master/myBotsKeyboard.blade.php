@@ -1,6 +1,6 @@
 {
     "inline_keyboard":[
-    @if($items->count()==0)
+    @if(count($items)==0)
         [
             {
                 "text":"نمایش محصولات",
@@ -18,20 +18,23 @@
             @endif
             [
                 {
-                    "text":"{{$items[$i]->detail['first_name']}}",
-                    "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$items[$i]->id])!!}"
+                    "text":"{{$items[$i]['detail']['first_name']}}",
+                    "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$items[$i]['id']])!!}"
                 },
                 {
-                    "text":"{{$items[$i+1]->detail['first_name']}}",
-                    "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$items[$i+1]->id])!!}"
+                    "text":"{{$items[$i+1]['detail']['first_name']}}",
+                    "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$items[$i+1]['id']])!!}"
                 }
             ]
         @endfor
         @isset($enditem)
-            ,[
+            @if($count)
+            ,
+            @endif
+            [
                 {
-                    "text":"{{$enditem->detail['first_name']}}",
-                    "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$enditem->id])!!}"
+                    "text":"{{$enditem['detail']['first_name']}}",
+                        "callback_data":"{!! interlink(["goto"=>"myBots@show","tenant"=>$enditem['id']])!!}"
                 }
             ]
         @endisset
