@@ -11,7 +11,7 @@ use App\Model\Master\Tenant;
 
 class Orders extends Magazine{
     public function main(){
-        $person=Person::where('telegramID',$this->detect->from->id??$this->detect->from->id)->first();
+        $person=$this->share['person']??Person::where('telegramID',$this->detect->from->id)->first();
         if(empty($person)){
             $this->caller(mstGreet::class)->main();
             return;
@@ -31,6 +31,15 @@ class Orders extends Magazine{
             $this->meet['request']['ref_mag']='Orders';
             $this->meet['request']['ref_car']='main';
             $this->caller(request::class)->contact();
+            return;
+        }
+
+        if($person->tenants()->where('tenants.status','trial')->count()>=1){
+            $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
+            $message['text']=view('master.orderLimitMessage',$person->detail)->render();
+            $send=new sendMessage($message);
+            $send();
+            $this->caller(myBots::class)->main();
             return;
         }
 
