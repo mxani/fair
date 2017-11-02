@@ -8,6 +8,8 @@ use XB\telegramMethods\editMessageText;
 use App\Model\Person;
 
 class myBots extends Magazine{
+    use \App\Helpers\Master\BotToken;
+
     public function __construct(&$u,&$s,&$m,&$d){
         parent::__construct($u,$s,$m,$d);
         $this->person=$this->share['person']??Person::where('telegramID',$this->detect->from->id)->first();
@@ -72,6 +74,59 @@ class myBots extends Magazine{
         ]);
         $answer();
         $this->main();
+    }
+
+    public function token(){
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+
+        $this->meet['goto']='myBots@getToken';
+        $this->meet['tenant']=$tenant->id;
+        $this->message['text']=view('master.changeTokenMessage')->render();
+        $send=new $this->api($this->message); 
+        $send();
+        $this->message['text']='توکن را وارد کنید.';
+        $this->message['reply_markup']=view('master.defaultMenu')->render();
+        $send=new sendMessage($this->message);
+        $send();
+    }
+
+    public function getToken(){
+        $botToken=$this->update->message->text??'';
+        if($botToken=='بیخیال شدم'){
+            $this->caller(mstGreet::class)->mainMenu();
+            return;
+        }
+
+        if(!preg_match("/\d+:\S+/", $botToken,$botToken) || false===$bot=$this->isValidToken($botToken[0])){
+            $this->meet['goto']='myBots@getToken';
+            $this->invalidToken();
+            return;
+        }
+
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+
+        $bot=json_decode($bot,true)['result'];
+        $botToken=$botToken[0];
+
+        $configs=\File::get("bot/tenants/{$tenant->token}/configs.php");
+        $configs=str_replace($tenant->bot_token,$botToken,$configs);
+        $configs=str_replace($tenant->detail['username'],$bot['username'],$configs);
+        $configs=\File::put("bot/tenants/{$tenant->token}/configs.php",$configs);
+
+        $tenant->bot_token=$botToken;
+        $tenant->detail=$bot;
+        $tenant->save();
+
+        $this->message['text']='توکن جدید اعمال شد.';
+        $this->message['reply_markup']=view('master.mainMenu',['customer'=>$this->person])->render();
+        $send=new sendMessage($this->message);
+        $send();
     }
 
 

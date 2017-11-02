@@ -12,6 +12,16 @@
         ],
         [
             {
+                "text":"تغییر توکن",
+                "callback_data":"{!! interlink(["goto"=>"myBots@token",'tenant'=>$tenant->id])!!}"
+            },
+            {
+                "text":"انصراف و برگشت هزینه",
+                "callback_data":"{!! interlink(["goto"=>"myBots@cancel"])!!}"
+            }
+        ],
+        [
+            {
                 "text":"حذف",
                 "callback_data":"{!! interlink(["goto"=>"myBots@del",'tenant'=>$tenant->id])!!}"
             },

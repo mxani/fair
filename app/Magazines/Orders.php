@@ -10,6 +10,8 @@ use App\Model\Master\Order;
 use App\Model\Master\Tenant;
 
 class Orders extends Magazine{
+    use \App\Helpers\Master\BotToken;
+
     public function main(){
         $person=$this->share['person']??Person::where('telegramID',$this->detect->from->id)->first();
         if(empty($person)){
@@ -81,13 +83,9 @@ class Orders extends Magazine{
             $this->caller(mstGreet::class)->mainMenu();
             return;
         }
-        $this->meet['goto']='Orders@getToken';
-        if($botToken=='راهنماییم کن'){
-            $this->help('token');
-            return;
-        }
 
         if(!preg_match("/\d+:\S+/", $botToken,$botToken) || false===$bot=$this->isValidToken($botToken[0])){
+            $this->meet['goto']='Orders@getToken';
             $this->invalidToken();
             return;
         }
@@ -195,34 +193,5 @@ class Orders extends Magazine{
 
 
     ///> privates
-    private function help($case){
-        $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
-        $message['text']=view('master.getTokenHelpMessage')->render();
-        $message['reply_markup']=view('master.defaultMenu')->render();
-        $send=new sendMessage($message);
-        $send();
-    }
 
-    private function invalidToken(){
-        $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
-        $message['text']="توکن وارد شده صحیح نیست.\n دوباره سعی کنید.";
-        $message['reply_markup']=view('master.defaultMenu')->render();
-        $send=new sendMessage($message);
-        $send();
-    }
-
-    private function isValidToken($botToken){
-        $old=config('XBtelegram.bot-token');
-        if($old==$botToken){
-            return false;
-        }
-        config(['XBtelegram.bot-token'=>$botToken]);
-        $info=new \XB\telegramMethods\getMe();
-        $raw=$info(false,true);
-        config(['XBtelegram.bot-token'=>$old]); 
-        if($raw=="{}"){
-            return false;
-        }
-        return $raw;     
-    }
 }
