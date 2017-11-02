@@ -14,15 +14,15 @@ class Order extends Model
     protected $casts = ['detail' => 'array'];
 
     public function Person(){
-        return $this->belongsTo(\Person::class);
+        return $this->belongsTo(\App\Model\Person::class);
     }
     
     public function Product(){
-        return $this->belongsTo(\Product::class);
+        return $this->belongsTo(\App\Model\Product::class);
     }
 
     public function Tenant(){
-        return $this->hasOne(Tenant::class);
+        return $this->hasOne(\App\Model\Master\Tenant::class);
     }
     
 }
