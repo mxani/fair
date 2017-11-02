@@ -31,9 +31,7 @@ class myBots extends Magazine{
     }
     
     public function show(){
-        $tenant_id=$this->detect->data->tenant??$this->meet['tenant']??null;
-        $tenant=$this->person->tenants()->find($tenant_id);
-        if(empty($tenant)){
+        if(empty($tenant=$this->getTenant())){
             $this->main();
             return;
         }
@@ -43,6 +41,47 @@ class myBots extends Magazine{
             ['tenant'=>$tenant])->render();
         $send=new $this->api($this->message); 
         $send();
+    }
+
+    public function del(){
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+
+        $this->message['text']=view('master.deleteMyBotMessage',['tenant'=>$tenant])->render();
+        $this->message['reply_markup']=view('master.deleteMyBotKeyboard',
+            ['tenant'=>$tenant])->render();
+        $send=new $this->api($this->message); 
+        $send();
+    }
+
+    public function delConfirm(){
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+        if(\File::exists('bot/tenants/'.$tenant->token)){
+            \File::makeDirectory('bot/tenants/deleted/');
+            \File::move('bot/tenants/'.$tenant->token,'bot/tenants/deleted/'.$tenant->token);
+        }
+        $tenant->delete();
+        $answer=new \XB\telegramMethods\answerCallbackQuery([
+            'callback_query_id'=>$this->update->callback_query->id,
+            'text'=>'حذف شد‼️‼️',
+        ]);
+        $answer();
+        $this->main();
+    }
+
+
+
+
+
+    ///> utils
+    protected function getTenant(){
+        return $this->person->tenants()->
+            find($this->detect->data->tenant??$this->meet['tenant']??null);
     }
     
 }
