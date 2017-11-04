@@ -11,7 +11,6 @@ class mstGreet extends Magazine{
 
         $person= new Person();
         $person->telegramID=$this->detect->from->id;
-        // dd($person);
         $person->detail=[
             'first_name'=>$this->detect->from->first_name,
             'last_name'=>$this->detect->from->last_name??'-',
@@ -22,6 +21,7 @@ class mstGreet extends Magazine{
         ];
         $person->save();
 
+        $this->share['person']=$person;
         $send=new sendMessage([
             'chat_id'=>$this->detect->from->id,
             'text'=>view('master.welcomeMessage',['person'=>$person])->render(),
