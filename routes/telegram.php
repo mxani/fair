@@ -4,6 +4,7 @@ if($this->detect->type == "callback_query" && !empty($this->detect->data->goto))
     Shoot::trigger('default',$this->detect->data->goto);
     return ;
 }
+use XB\telegramMethods\sendMessage;
 
 if (empty($this->detect->tenant)) {
         require_once('master.php');
@@ -17,7 +18,33 @@ if ($this->detect->type=='inline_query') {
 }
 
 if ($this->detect->from->id == config('owner_id') && ($this->update->message->text??'') == '*admin' || ($this->update->message->text??'') == '*مدیریت') {
+   
+    $expired_date=date_create(config('expires_at'));
+    $now=date_create();
+    $diff=date_diff($now,$expired_date);
+    if($diff->invert == 1){ // expired
+
+        $send=new sendMessage([
+            'chat_id'=>config('owner_id'),
+            'text'=>" مهلت استفاده از ربات به پایان رسیده است.\n لطفا جهت تمدید به آدرس زیر مراجعه کنید. \n @telerobotic_bot",
+            'parse_mode'=>'html',
+            ]);
+        $send();
+
+        $this->trigger(true, 'adminPanel@logout');
+        return;
+    }
+
+    if($diff->days < 4){
+        $send=new sendMessage([
+            'chat_id'=>config('owner_id'),
+            'text'=>"⚠ ️مهلت استفاده از ربات : <code>$diff->days</code> روز و <code>$diff->h</code> ساعت و <code>$diff->i</code> دقیقه ⚠️",
+            'parse_mode'=>'html',
+            ]);
+        $send();
+    }
     $this->meet['mod'] = 'admin';// logged in
+
 }
 
 if (($this->meet['mod'] ??'') != 'admin') {
