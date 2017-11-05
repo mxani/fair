@@ -1,9 +1,5 @@
 <?php
 use XB\theory\Shoot;
-if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
-    Shoot::trigger('default',$this->detect->data->goto);
-    return ;
-}
 use XB\telegramMethods\sendMessage;
 
 if (empty($this->detect->tenant)) {
@@ -11,6 +7,10 @@ if (empty($this->detect->tenant)) {
         return;
 }
 DB::purge('mysql');
+if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
+    Shoot::trigger('default',$this->detect->data->goto);
+    return ;
+}
 
 if ($this->detect->type=='inline_query') {
     $this->trigger('default', 'Suggest');
