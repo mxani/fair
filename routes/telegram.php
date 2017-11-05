@@ -1,5 +1,9 @@
 <?php
 use XB\theory\Shoot;
+if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
+    Shoot::trigger('default',$this->detect->data->goto);
+    return ;
+}
 
 if (empty($this->detect->tenant)) {
         require_once('master.php');
