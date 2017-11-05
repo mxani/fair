@@ -64,10 +64,12 @@ class myBots extends Magazine{
             return;
         }
         if(\File::exists('bot/tenants/'.$tenant->token)){
-            \File::makeDirectory('bot/tenants/deleted/');
+            if(!\File::exists('bot/tenants/deleted/')){
+                \File::makeDirectory('bot/tenants/deleted/');
+            }
             \File::move('bot/tenants/'.$tenant->token,'bot/tenants/deleted/'.$tenant->token);
+            $tenant->delete();
         }
-        $tenant->delete();
         $answer=new \XB\telegramMethods\answerCallbackQuery([
             'callback_query_id'=>$this->update->callback_query->id,
             'text'=>'حذف شد‼️‼️',
