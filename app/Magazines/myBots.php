@@ -129,7 +129,42 @@ class myBots extends Magazine{
         $send();
     }
 
+    public function cancel(){
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+        $diff=\Carbon\Carbon::now()->diff($tenant->expires_at);
 
+        $this->message['text']=view('master.cancelMessage',
+            ['diff'=>$diff])->render();
+        $this->message['reply_markup']=view('master.cancelKeyboard',
+            ['diff'=>$diff,'tenant'=>$tenant])->render();
+        $send=new $this->api($this->message);
+        $send();   
+    }
+
+    public function cancelConfirm(){
+        if(empty($tenant=$this->getTenant())){
+            $this->main();
+            return;
+        }
+        $diff=\Carbon\Carbon::now()->diff($tenant->expires_at);
+        if($diff->invert==0 &&( $diff->y>0|| $diff->m>5)){
+            $this->message['text']=view('master.cancelConfirmMessage')->render();
+            $send=new $this->api($this->message);
+            $send(); 
+
+            $this->message['text']=view('master.canceledMessage',
+                ['diff'=>$diff,'tenant'=>$tenant,'customer'=>$this->person])->render();
+            $this->message['chat_id']='470453293';
+            $send=new sendMessage($this->message);
+            $send();  
+            return;
+        }
+
+        $this->main();
+    }
 
 
 
