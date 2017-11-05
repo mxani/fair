@@ -1,7 +1,7 @@
 <?php
 
 if($this->detect->type == "callback_query" && !empty($this->detect->data->goto)){
-    Shoot::trigger('default',$this->detect->data->goto);
+    $this->trigger('default',$this->detect->data->goto);
     return ;
 }
 
