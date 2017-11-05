@@ -44,7 +44,7 @@ class sayHello extends Magazine
     private function showMenu($textMessage, $target_menu)
     {
         $send=new sendMessage([
-            'chat_id'=>$this->update->message->chat->id,
+            'chat_id'=>$this->detect->chat->id,
             'text'=>$textMessage,
             'parse_mode'=>'html',
             'reply_markup'=>view($target_menu)->render()
