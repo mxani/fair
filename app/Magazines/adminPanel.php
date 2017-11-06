@@ -14,4 +14,13 @@ class adminPanel extends Magazine
         $this->meet['mod']='';
         $this->caller(sayHello::class)->mainMenu();
     }
+
+    public function guide(){
+        $send=new sendMessage([
+            'chat_id' => $this->detect->from->id,
+            'text' => view('guideMessage')->render(),
+            'parse_mode' => 'html',
+            ]);
+        $send();
+    }
 }
