@@ -82,7 +82,7 @@ if (!empty($this->update->message->text)) {
         case 'مدیریت صفحات': $this->share['route']= 'adminPosts@index'; $this->meet['magazine']=['name'=>'adminPosts','postType'=>'page']; break;
         case 'مدیریت گزارشات': $this->share['route']= 'adminReports@index'; break;
         case 'اطلاع رسانی': $this->share['route']= 'adminNotices@index'; break;
-        case 'آموزش کار با پنل': $this->share['route']= 'adminNotices@index'; break;
+        case 'آموزش کار با پنل': $this->share['route']= 'adminPanel@guide'; break;
         case 'خروج از مدیریت': $this->share['route']= 'adminPanel@logout'; break;
         default: $this->share['route']='sayHello@adminMenu'; break;
     }
