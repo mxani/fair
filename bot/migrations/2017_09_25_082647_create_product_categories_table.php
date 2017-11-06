@@ -18,9 +18,6 @@ class CreateProductCategoriesTable extends Migration
             $table->integer('cat_id')->unsigned();
             $table->integer('product_id')->unsigned();
             $table->timestamps();
-
-            $table->foreign('cat_id')->references('id')->on('categories');
-            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

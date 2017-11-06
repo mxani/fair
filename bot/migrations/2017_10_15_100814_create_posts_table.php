@@ -17,7 +17,7 @@ class CreatePostsTable extends Migration
             $table->increments('id');
             $table->string( 'title' );
 			$table->string( 'thumb' )->nullable();
-			$table->text( 'content' );
+			$table->string( 'content' , 3500);
 			$table->string( 'type' )->default( "blog" );
 			$table->boolean( 'status' )->default( true );
 			$table->timestamps();
