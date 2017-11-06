@@ -50,7 +50,7 @@ if ($this->detect->from->id == config('owner_id') && ($this->update->message->te
 if (($this->meet['mod'] ??'') != 'admin') {
     ## customer
 
-    if ($this->detect->type=='message') { 
+    if ($this->detect->type=='message'&&$this->detect->msgtype=='text') { 
 
         $this->trigger(function () { return $this->update->message->text == '/start'; }, 'sayHello');
         $this->trigger(function () { return $this->update->message->text == 'نمایش محصولات'; }, 'Categories@index');
