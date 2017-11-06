@@ -151,13 +151,13 @@ class adminPosts extends Magazine
         $post->title = $this->update->message->text??$post->title;
         $post->update();
 
-        if (!empty($this->meet['section']['state'] )) {
-            $this->editContent();
-        } else {
+        //if (!empty($this->meet['section']['state'] )) {
+        //    $this->editContent();
+        //} else {
             $this->meet['magazine']['postType']=$this->meet['section']['postType'];
             unset($this->meet['section']);
             $this->index();
-        }
+        //}
     }
 
     ############# Edit Description #############
@@ -187,13 +187,13 @@ class adminPosts extends Magazine
         $post->content = $this->update->message->text??$post->content;
         $post->update();
 
-        if (!empty($this->meet['section']['state'] )) {
-            $this->newPic();
-        } else {
+        //if (!empty($this->meet['section']['state'] )) {
+        //    $this->newPic();
+        //} else {
             $this->meet['magazine']['postType']=$this->meet['section']['postType'];
             unset($this->meet['section']);
             $this->index();
-        }
+        //}
     }
 
     ############# Delete Product #############
@@ -214,8 +214,8 @@ class adminPosts extends Magazine
     {
         
         $post = Post::create([
-            'title' => 'عنوان مطلب',
-            'content' => 'توضیحات مطلب',
+            'title' => 'عنوان',
+            'content' => 'توضیحات',
             'type' => $this->detect->data->postType,
             ]);
             

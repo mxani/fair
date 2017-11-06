@@ -1,13 +1,13 @@
 @if(!empty($product))
 
-    <b>{{$product->title}}</b>
+<code>{{$product->title}}</code>
 
-    <b>{{$product->price}}</b>
+قیمت : <code>{{$product->price}}</code>
 
-    <pre>{{$product->description}}</pre>
+{{$product->description}}
  
-    @isset($product->files[$pic])
-        <a href="{{$product->files[$pic]}}">&#8205;</a>
-    @endisset
+@isset($product->files[$pic])
+<a href="{{$product->files[$pic]}}">&#8205;</a>
+@endisset
 
 @endif

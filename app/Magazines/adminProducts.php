@@ -205,14 +205,14 @@ class adminProducts extends Magazine
         $product->title = $this->update->message->text??$product->title;
         $product->update();
 
-        if (!empty($this->meet['section']['state'] )) {
-            $this->editContent();
-        } else {
+        //if (!empty($this->meet['section']['state'] )) {
+        //    $this->editContent();
+        //} else {
             $category_id = $this->meet['section']['cat_id'];
             $current_pid = $this->meet['section']['id'];
             $this->index( $category_id, $current_pid );
             unset($this->meet['section']);
-        }
+        //}
     }
 
     ############# Edit Description #############
@@ -242,14 +242,14 @@ class adminProducts extends Magazine
         $product->description = $this->update->message->text??$product->description;
         $product->update();
 
-        if (!empty($this->meet['section']['state'] )) {
-            $this->editPrice();
-        } else {
+        //if (!empty($this->meet['section']['state'] )) {
+        //    $this->editPrice();
+        //} else {
             $category_id = $this->meet['section']['cat_id'];
             $current_pid = $this->meet['section']['id'];
             $this->index( $category_id, $current_pid );
             unset($this->meet['section']);
-        }
+        //}
     }
 
     ############# Edit Price #############
@@ -280,14 +280,14 @@ class adminProducts extends Magazine
         $product->price = $this->update->message->text ?? $product->price;
         $product->update();
 
-        if (!empty($this->meet['section']['state'] )) {
-            $this->newPic();
-        } else {
+        //if (!empty($this->meet['section']['state'] )) {
+        //    $this->newPic();
+        //} else {
             $category_id = $this->meet['section']['cat_id'];
             $current_pid = $this->meet['section']['id'];
             $this->index( $category_id, $current_pid );
             unset($this->meet['section']);
-        }
+        //}
     }
 
     ############# Delete Product #############

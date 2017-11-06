@@ -12,10 +12,8 @@
                 @endisset
             ]
 
-            @if(isset($next) && isset($prev))
-            ,
-            @endif
             @isset($prev)
+            ,
             [
                 {
                     "text":"{!! $prev_title !!}",

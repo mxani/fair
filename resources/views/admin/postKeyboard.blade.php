@@ -1,6 +1,6 @@
 {
     "inline_keyboard":[
-@if(!empty($current_id))
+    @if(!empty($current_id))
         @if(isset($next) || isset($prev))
         
             [
@@ -46,7 +46,7 @@
                 "callback_data":"{!! interlink(["goto"=>'adminPosts@destroy',"id"=>$current_id,"postType"=>$postType])!!}"
             },
             {
-                "text":"📝 تغییر تصویر",
+                "text":"🖼 تغییر تصویر",
                 "callback_data":"{!! interlink(["goto"=>'adminPosts@newPic',"id"=>$current_id,"postType"=>$postType])!!}"
             }
         ]
