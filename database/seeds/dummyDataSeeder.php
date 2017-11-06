@@ -15,6 +15,12 @@ class dummyDataSeeder extends Seeder
     public function run()
     {
         ########## Category ##########
+        //default category
+        DB::table('categories')->insert([
+            'name' => 'متفرقه',
+            'parent_id' => null
+        ]);
+
         $cat_ids = [];
         $categories = ['کت و شلوار','پیراهن','مانتو','کیف و کفش'];
         for ($i = 0; $i < count($categories); $i++) {
