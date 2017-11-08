@@ -11,7 +11,7 @@ class request extends Magazine{
         $this->meet['goto']='request@contactSave';
         $send=new sendMessage([
             'chat_id'=>$this->detect->chat->id??$this->detect->from->id,
-            'text'=>"برای ادامه فرآیند, داشتن شماره تلفن همراه شما الزامی میباشد.\nشماره تلفن شما قبلن ثبت نشده است.\nبا فشوردن دکمه زیر شماره تلفن شما بطور خودکار ثبت میشود.\nاین تضمین به شما داده میشود که شماره تلفن شما مورد هیچگونه سؤ استفاده قرار نگیرد",
+            'text'=>view('master.getPhoneNumberMessage')->render(),
             'parse_mode'=>'html',
             'reply_markup'=>$this->keyboard,
             ]);
@@ -22,7 +22,7 @@ class request extends Magazine{
         $this->meet['goto']='request@contactSave';
         $send=new sendMessage([
             'chat_id'=>$this->detect->chat->id??$this->detect->from->id,
-            'text'=>"اطلاعات نادرست\nفقط از دکمه زیر برای وارد کردن شماره تلفن استفاده کنید.",
+            'text'=>view('master.errorPhoneNumberMessage')->render(),
             'parse_mode'=>'html',
             'reply_markup'=>$this->keyboard,
             ]);
