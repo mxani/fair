@@ -22,7 +22,7 @@ trait BotToken {
 
     private function invalidToken(){
         $message=['chat_id'=>$this->detect->from->id,'parse_mode'=>'html'];
-        $message['text']="توکن وارد شده صحیح نیست.\n دوباره سعی کنید.";
+        $message['text']=view('master.invalidTokenMessage')->render();
         $message['reply_markup']=view('master.defaultMenu')->render();
         $send=new sendMessage($message);
         $send();
