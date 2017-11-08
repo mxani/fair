@@ -13,7 +13,7 @@ class request extends Magazine{
             'chat_id'=>$this->detect->chat->id??$this->detect->from->id,
             'text'=>view('master.getPhoneNumberMessage')->render(),
             'parse_mode'=>'html',
-            'reply_markup'=>$this->keyboard,
+            'reply_markup'=>view('master.phoneNumberMenu')->render(),
             ]);
         $send();
     }
@@ -24,12 +24,11 @@ class request extends Magazine{
             'chat_id'=>$this->detect->chat->id??$this->detect->from->id,
             'text'=>view('master.errorPhoneNumberMessage')->render(),
             'parse_mode'=>'html',
-            'reply_markup'=>$this->keyboard,
+            'reply_markup'=>view('master.phoneNumberMenu')->render(),
             ]);
         $send();
     }
 
-    private $keyboard='{"keyboard":[[{"text":"دراختیار قرار دادن شماره تلفن (خودکار)","request_contact":true}],[{"text":"انصراف"}]],"resize_keyboard":true,"one_time_keyboard":true}';
 
     public function contactSave(){
         $user_id=$this->update->message->contact->user_id??$this->update->message->text??null;
