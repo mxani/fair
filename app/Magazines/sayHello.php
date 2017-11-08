@@ -51,4 +51,19 @@ class sayHello extends Magazine
         ]);
         $send();
     }
+
+    public function first(){
+        $person= new Person();
+        $person->telegramID=$this->detect->from->id;
+        $person->detail=[
+            'owner'=>true,
+            'first_name'=>$this->detect->from->first_name,
+            'last_name'=>$this->detect->from->last_name??'-',
+            'username'=>$this->detect->from->username??'-',
+        ];
+        $person->save();
+        unset($this->meet['section']);
+        $this->showMenu(view('admin.welcomeMessage')->render(),'admin.adminMenu');
+    }
+
 }

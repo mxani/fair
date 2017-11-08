@@ -113,6 +113,8 @@ class Orders extends Magazine{
 
         \File::makeDirectory("$tenantPath/logs",0755,true);
         \File::makeDirectory("$tenantPath/meetings");
+        \File::put("$tenantPath/meetings/{$this->detect->from->id}.json",
+            '{"mod":"admin","section":{"route":"sayHello@first"}}');
 
         $tenant= new Tenant;
         $tenant->order_id=$order->id;
