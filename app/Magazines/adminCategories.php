@@ -42,7 +42,8 @@ class adminCategories extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "نام دسته جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
+        $this->meet['cancel']='adminCategories@index';
         (new sendMessage($message))->call();
     }
 
@@ -77,12 +78,13 @@ class adminCategories extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "نام جدید برای دسته  <code>".$category['name']."</code>  وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
         (new sendMessage($message))->call();
     }
 
     public function update()
     {
+        unset($this->meet['cancel']);
         $category = Category::find($this->meet['section']['id']);
         $category->name = $this->update->message->text;
         if ($category->update()) {

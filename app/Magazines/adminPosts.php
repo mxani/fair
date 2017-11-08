@@ -27,6 +27,7 @@ class adminPosts extends Magazine
             $selected_id = $this->detect->data->id;
         }  elseif (!empty($this->meet['section']['id'])) {
             $selected_id = $this->meet['section']['id'];
+            unset($this->meet['section']);
         } else {
             $selected_id = false;
         }
@@ -89,11 +90,13 @@ class adminPosts extends Magazine
         $message['chat_id'] = $this->detect->from->id;
         $message['text'] = "یک تصویر جدید برای <code>$post->title</code> ارسال کنید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
+        $this->meet['cancel']='adminPosts@index';
         (new sendMessage($message))->call();
     }
     public function storePic()
     {
+        unset($this->meet['cancel']);
         if (!empty($this->update->message->photo)) {
             $file = $this->update->message->photo;
             $file = $file[count($file)-1];
@@ -116,15 +119,17 @@ class adminPosts extends Magazine
         if (!empty($file_id)) {
             $newImage = $this->get_url($file_id);
 
-            $post = Post::find($this->meet['section']['id']);
+            $post_id = $this->meet['section']['id'];
+            $post = Post::find($post_id);
             $post->thumb = $newImage;
             $post->update();
         }
 
         $this->meet['magazine']['postType']=$this->meet['section']['postType'];
-        unset($this->meet['section']);
+        $this->meet['section']='';
+        $this->meet['section']=['id'=> $post_id];
         $this->index();
-
+        $this->caller(sayHello::class)->adminMenu();
     }
 
     ############# Edit Title #############
@@ -141,33 +146,45 @@ class adminPosts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "عنوان جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
+        $this->meet['cancel']='adminPosts@index';
         (new sendMessage($message))->call();
     }
     public function updateTitle()
     {
-        $post = Post::find($this->meet['section']['id']);
+        unset($this->meet['cancel']);
+        if(!empty($this->meet['section']['id'])){
+            $post_id = $this->meet['section']['id'];
+            $post = Post::find($this->meet['section']['id']);
         
-        $post->title = $this->update->message->text??$post->title;
-        $post->update();
+            $post->title = $this->update->message->text??$post->title;
+            $post->update();
+        }
+        
+        if(($this->meet['section']['state'])??'' == 'create'){
+            $post = Post::create([
+                'title' => $this->update->message->text??'عنوان',
+                'content' => 'توضیحات',
+                'type' => $this->meet['section']['postType'],
+            ]);
+            $post_id = $post->id;
+        }
 
         //if (!empty($this->meet['section']['state'] )) {
         //    $this->editContent();
         //} else {
             $this->meet['magazine']['postType']=$this->meet['section']['postType'];
-            unset($this->meet['section']);
+            $this->meet['section']='';
+            $this->meet['section']=['id'=> $post_id];
             $this->index();
+            $this->caller(sayHello::class)->adminMenu();
         //}
     }
 
     ############# Edit Description #############
     public function editContent()
     {
-        if (empty($this->meet['section']['state'] )) {
-            $this->meet['section'] = ['name'=>'editContent','route'=>'adminPosts@updateContent','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
-        } else {
-            $this->meet['section'] = ['name'=>'editContent','route'=>'adminPosts@updateContent','id'=>$this->meet['section']['id'], 'postType'=>$this->meet['section']['postType'],'state'=>'create'];
-        }
+        $this->meet['section'] = ['name'=>'editContent','route'=>'adminPosts@updateContent','id'=>$this->detect->data->id, 'postType'=>$this->detect->data->postType];
         
         $chat_id = $this->detect->from->id;
         if ($this->detect->type == 'callback_query') {
@@ -178,12 +195,15 @@ class adminPosts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "توضیحات جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
+        $this->meet['cancel']='adminPosts@index';
         (new sendMessage($message))->call();
     }
     public function updateContent()
     {
-        $post = Post::find($this->meet['section']['id']);
+        unset($this->meet['cancel']);
+        $post_id = $this->meet['section']['id'];
+        $post = Post::find($post_id);
         $post->content = $this->update->message->text??$post->content;
         $post->update();
 
@@ -191,8 +211,10 @@ class adminPosts extends Magazine
         //    $this->newPic();
         //} else {
             $this->meet['magazine']['postType']=$this->meet['section']['postType'];
-            unset($this->meet['section']);
+            $this->meet['section']='';
+            $this->meet['section']=['id'=> $post_id];
             $this->index();
+            $this->caller(sayHello::class)->adminMenu();
         //}
     }
 
@@ -211,15 +233,8 @@ class adminPosts extends Magazine
 
     ############# Add New Product #############
     public function newPost()
-    {
-        
-        $post = Post::create([
-            'title' => 'عنوان',
-            'content' => 'توضیحات',
-            'type' => $this->detect->data->postType,
-            ]);
-            
-        $this->meet['section'] = ['name'=>'newPost','route'=>'adminPosts@updateTitle','id'=>$post->id, 'postType'=>$this->detect->data->postType,'state'=>'create'];
+    {            
+        $this->meet['section'] = ['name'=>'newPost','route'=>'adminPosts@updateTitle', 'postType'=>$this->detect->data->postType,'state'=>'create'];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
@@ -230,7 +245,8 @@ class adminPosts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "عنوان جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminPosts@index';
         (new sendMessage($message))->call();
     }
 
@@ -250,8 +266,7 @@ class adminPosts extends Magazine
             $message['reply_markup'] = $reply_markup;
         }
         (new $api($message))->call();
-        
-        $this->caller(sayHello::class)->adminMenu();
+
     }
 
     ## getting the url of uploaded image in telegram ##

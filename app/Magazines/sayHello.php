@@ -38,13 +38,13 @@ class sayHello extends Magazine
         // $admin = $this->update->message->from->first_name ?? 'کاربر';
         // $message = ['type'=>'text','value'=> $admin.'عزیز، به بخش مدیریت خوش آمدید '];
         $textMessage = 'لطفا یکی از <code>گزینه ها</code> را انتخاب کنید.';
-        $this->showMenu($textMessage,'admin.adminMenu');
+        return $this->showMenu($textMessage,'admin.adminMenu');
     }
 
     private function showMenu($textMessage, $target_menu)
     {
         $send=new sendMessage([
-            'chat_id'=>$this->detect->chat->id,
+            'chat_id'=>$this->detect->chat->id??$this->detect->from->id??$this->callback_query->message->chat->id,
             'text'=>$textMessage,
             'parse_mode'=>'html',
             'reply_markup'=>view($target_menu)->render()

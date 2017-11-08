@@ -69,11 +69,34 @@ if (($this->meet['mod'] ??'') != 'admin') {
 }
 
 ##### is admin #####
+
+// if action was canceled 
+if(!empty($this->meet['cancel'])&&($this->update->message->text??'') =='انصراف'){
+    $cancel=$this->meet['cancel'];
+    if(!empty($this->meet['section']['cat_id'])){
+        $cat_id = $this->meet['section']['cat_id'];
+        $id = $this->meet['section']['id']??null;
+        $this->meet['section'] = '';
+        $this->meet['section']=['cat_id'=> $cat_id, 'id'=> $id];
+    }elseif(!empty($this->meet['section']['id'])){
+        $id = $this->meet['section']['id'];
+        $this->meet['section'] = '';
+        $this->meet['section']=['id'=> $id];
+    }else{
+        unset($this->meet['section']);
+    }
+    unset($this->meet['cancel']);
+    $this->trigger(function(){return true;},$cancel);
+    $this->trigger(function(){return true;},'sayHello@adminMenu');
+    return;
+}
+
 if (!empty($this->meet['section'])) {
         $this->trigger('default', $this->meet['section']['route']);
         return;
 }
 
+// admin menu
 if (!empty($this->update->message->text)) {
     switch ($this->update->message->text) {
         case 'مدیریت دسته ها': $this->share['route']= 'adminCategories@index'; break;

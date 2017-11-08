@@ -35,6 +35,9 @@ class adminProducts extends Magazine
 
         if (!empty($this->detect->data->cat_id)) {
             $category_id = $this->detect->data->cat_id;
+        } elseif (!empty($this->meet['section']['cat_id'])) {
+            $category_id = $this->meet['section']['cat_id'];
+            unset($this->meet['section']);
         } else {
             $category_id = $category_id;
         }
@@ -42,7 +45,7 @@ class adminProducts extends Magazine
         $keyBpara['cat_id'] = $category_id;
         $keyBpara['goto'] = 'adminProducts@index';
         $category = Category::find($category_id);
-
+ 
         if (!empty($this->detect->data->id)) {
             $selected_product_id = $this->detect->data->id;
         } elseif (!empty($current_pid)) {
@@ -54,7 +57,7 @@ class adminProducts extends Magazine
         //$selected_product_id=$this->detect->data->id??false;
         $pic=$product=null;
 
-    if($category->products->count() == 1){
+        if ($category->products->count() == 1) {
             $product = $category->products->first();
             $keyBpara['flow']=$product->id;
             $pic=$this->detect->data->pic??0;
@@ -62,32 +65,32 @@ class adminProducts extends Magazine
             $keyBpara['pic'] = $pic;
             $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
             $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
-    }else{
-        $products=$category->products();
-        if ($selected_product_id) {
-            $products=$products->where('products.id', '<=', $selected_product_id);
-        }
-        $products=$products->orderby('id', 'desc')->take(2)->get();
+        } else {
+            $products=$category->products();
+            if ($selected_product_id) {
+                $products=$products->where('products.id', '<=', $selected_product_id);
+            }
+            $products=$products->orderby('id', 'desc')->take(2)->get();
         
-        if (!empty($products[0])) {
-            $product=$products[0];
-            $keyBpara['flow']=$product->id;   
-            $pic=$this->detect->data->pic??0;
-            $pic = empty($product->files[$pic]) ? null : $pic;
-            $keyBpara['pic'] = $pic;
-            $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
-            $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
+            if (!empty($products[0])) {
+                $product=$products[0];
+                $keyBpara['flow']=$product->id;
+                $pic=$this->detect->data->pic??0;
+                $pic = empty($product->files[$pic]) ? null : $pic;
+                $keyBpara['pic'] = $pic;
+                $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
+                $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
             
-            $back=$category->products()->where('products.id', '>', $products[0]->id)->orderby('id', 'asc')->first();
-            $keyBpara['prev']=$back->id??null;
+                $back=$category->products()->where('products.id', '>', $products[0]->id)->orderby('id', 'asc')->first();
+                $keyBpara['prev']=$back->id??null;
+            }
+            if (!empty($products[1])) {
+                $keyBpara['next']=$products[1]->id;
+            }
         }
-        if (!empty($products[1])) {
-            $keyBpara['next']=$products[1]->id;
-        }
-    }
 
         $msg_text = $this->text."محصولی برای نمایش وجود ندارد.";
-        if(!empty($product)){
+        if (!empty($product)) {
             $msg_text = view('productMessage', ['product'=>$product,'pic'=>$pic])->render();
         }
         $msg_reply_markup = view('admin.productKeyboard', $keyBpara)->render();
@@ -97,12 +100,8 @@ class adminProducts extends Magazine
     ############# Add a Picture #############
     public function newPic()
     {
-        if (empty($this->meet['section']['state'])) {
-            $this->meet['section'] = ['name'=>'newPic','route'=>'adminProducts@storePic','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
-        } else {
-            $this->meet['section'] = ['name'=>'newPic','route'=>'adminProducts@storePic','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id']];
-        }
-
+        $this->meet['section'] = ['name'=>'newPic','route'=>'adminProducts@storePic','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
+       
         if (!empty($this->meet['section']['id'])) {
             $id = $this->meet['section']['id'];
         } else {
@@ -113,16 +112,20 @@ class adminProducts extends Magazine
         $message['chat_id'] = $this->detect->from->id;
         $message['text'] = "یک تصویر جدید برای محصول <code>$product->title</code> ارسال کنید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminProducts@index';
         (new sendMessage($message))->call();
     }
     public function storePic()
     {
+        unset($this->meet['cancel']);
+        $product_id = $this->meet['section']['id'];
+
         if (!empty($this->update->message->photo)) {
             $file = $this->update->message->photo;
             $file = $file[count($file)-1];
             $file_id = $file->file_id;
-        }else{
+        } else {
             $message['chat_id'] = $this->detect->from->id;
             $message['text'] = "لطفا فقط یک تصویر را با در نظر گرفتن حالت <code>فشرده (compress)</code> ارسال کنید";
             $message['parse_mode'] = 'html';
@@ -136,21 +139,22 @@ class adminProducts extends Magazine
             // generate fake image url
             $faker = \Faker\Factory::create('fa_IR');
             $fake_image = $faker->imageurl;
-            */        
-            $product = Product::find($this->meet['section']['id']);
+            */
+            $product = Product::find($product_id);
             $current_files = [];
-            if($product->files){
+            if ($product->files) {
                 $current_files = $product->files;
             }
             array_unshift($current_files, $newImage);
             $product->files = array_values($current_files);
             $product->update();
-        }     
+        }
 
         $category_id = $this->meet['section']['cat_id'];
-        $current_pid = $this->meet['section']['id'];
-        $this->index( $category_id, $current_pid );
+        //$current_pid = $this->meet['section']['id'];
+        $this->index( $category_id, $product_id );
         unset($this->meet['section']);
+        $this->caller(sayHello::class)->adminMenu();
     }
 
     ############# Remove Picture #############
@@ -164,7 +168,7 @@ class adminProducts extends Magazine
         
         $lastpic = end($files);
         $isLastPic = false;
-        if($product->files[$pic_index]  == $lastpic){
+        if ($product->files[$pic_index]  == $lastpic) {
             $isLastPic = true;
         }
 
@@ -172,7 +176,7 @@ class adminProducts extends Magazine
         $product->files = array_values($files);
         $product->update();
 
-        if($isLastPic){
+        if ($isLastPic) {
             $files = $product->files;
             end($files);
             $lastpicKey = key($files);
@@ -196,33 +200,41 @@ class adminProducts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "عنوان جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminProducts@index';
         (new sendMessage($message))->call();
     }
     public function updateTitle()
-    {  
-        $product = Product::find($this->meet['section']['id']);
-        $product->title = $this->update->message->text??$product->title;
-        $product->update();
+    {
+        unset($this->meet['cancel']);
+        if (($this->meet['section']['state'])??'' == 'create') {
+            $product = Product::create([
+                'title' => $this->update->message->text??'عنوان محصول',
+                'description' => 'توضیحات محصول',
+                'price' => 0,
+                ]);
+            $product->category()->attach($this->meet['section']['cat_id']);
+            $product_id = $product->id;
+        }
 
-        //if (!empty($this->meet['section']['state'] )) {
-        //    $this->editContent();
-        //} else {
-            $category_id = $this->meet['section']['cat_id'];
-            $current_pid = $this->meet['section']['id'];
-            $this->index( $category_id, $current_pid );
-            unset($this->meet['section']);
-        //}
+        if(!empty($this->meet['section']['id'])){
+            $product = Product::find($this->meet['section']['id']);
+            $product->title = $this->update->message->text??$product->title;
+            $product->update();
+            $product_id = $product->id;
+        }
+
+        $category_id = $this->meet['section']['cat_id'];
+        //$current_pid = $this->meet['section']['id'];
+        $this->index( $category_id, $product_id );
+        unset($this->meet['section']);
+        $this->caller(sayHello::class)->adminMenu();
     }
 
     ############# Edit Description #############
     public function editContent()
     {
-        if (empty($this->meet['section']['state'] )) {
-            $this->meet['section'] = ['name'=>'editContent','route'=>'adminProducts@updateContent','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
-        } else {
-            $this->meet['section'] = ['name'=>'editContent','route'=>'adminProducts@updateContent','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
-        }
+        $this->meet['section'] = ['name'=>'editContent','route'=>'adminProducts@updateContent','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
         
         $chat_id = $this->detect->from->id;
         if ($this->detect->type == 'callback_query') {
@@ -233,34 +245,30 @@ class adminProducts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "توضیحات جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminProducts@index';
         (new sendMessage($message))->call();
     }
     public function updateContent()
     {
-        $product = Product::find($this->meet['section']['id']);
+        unset($this->meet['cancel']);
+        $product_id = $this->meet['section']['id'];
+        $product = Product::find($product_id);
         $product->description = $this->update->message->text??$product->description;
         $product->update();
 
-        //if (!empty($this->meet['section']['state'] )) {
-        //    $this->editPrice();
-        //} else {
+
             $category_id = $this->meet['section']['cat_id'];
-            $current_pid = $this->meet['section']['id'];
-            $this->index( $category_id, $current_pid );
+            //$current_pid = $this->meet['section']['id'];
+            $this->index( $category_id, $product_id );
             unset($this->meet['section']);
-        //}
+            $this->caller(sayHello::class)->adminMenu();
     }
 
     ############# Edit Price #############
     public function editPrice()
-    {
-        
-        if (empty($this->meet['section']['state'])) {
-            $this->meet['section'] = ['name'=>'editPrice','route'=>'adminProducts@updatePrice','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
-        } else {
-            $this->meet['section'] = ['name'=>'editPrice','route'=>'adminProducts@updatePrice','id'=>$this->meet['section']['id'], 'cat_id'=>$this->meet['section']['cat_id'],'state'=>'create'];
-        }
+    {        
+        $this->meet['section'] = ['name'=>'editPrice','route'=>'adminProducts@updatePrice','id'=>$this->detect->data->id, 'cat_id'=>$this->detect->data->cat_id];
         
         $chat_id = $this->detect->from->id;
         if ($this->detect->type == 'callback_query') {
@@ -271,23 +279,25 @@ class adminProducts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "قیمت جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminProducts@index';
         (new sendMessage($message))->call();
     }
     public function updatePrice()
     {
-        $product = Product::find($this->meet['section']['id']);
+        unset($this->meet['cancel']);
+        $product_id = $this->meet['section']['id'];
+
+        $product = Product::find($product_id);
         $product->price = $this->update->message->text ?? $product->price;
         $product->update();
 
-        //if (!empty($this->meet['section']['state'] )) {
-        //    $this->newPic();
-        //} else {
+
             $category_id = $this->meet['section']['cat_id'];
-            $current_pid = $this->meet['section']['id'];
-            $this->index( $category_id, $current_pid );
+            //$current_pid = $this->meet['section']['id'];
+            $this->index( $category_id, $product_id );
             unset($this->meet['section']);
-        //}
+            $this->caller(sayHello::class)->adminMenu();
     }
 
     ############# Delete Product #############
@@ -304,16 +314,8 @@ class adminProducts extends Magazine
 
     ############# Add New Product #############
     public function newProduct()
-    {
-        
-        $product = Product::create([
-            'title' => 'عنوان محصول',
-            'description' => 'توضیحات محصول',
-            'price' => 0,
-            ]);
-        $product->category()->attach($this->detect->data->cat_id);
-            
-        $this->meet['section'] = ['name'=>'newProduct','route'=>'adminProducts@updateTitle','id'=>$product->id, 'cat_id'=>$this->detect->data->cat_id,'state'=>'create'];
+    {            
+        $this->meet['section'] = ['name'=>'newProduct','route'=>'adminProducts@updateTitle','cat_id'=>$this->detect->data->cat_id,'state'=>'create'];
 
         if ($this->detect->type == 'callback_query') {
             $chat_id = $this->detect->from->id;
@@ -324,7 +326,8 @@ class adminProducts extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "عنوان جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] = view('cancleMenu')->render();
+        $this->meet['cancel']='adminProducts@index';
         (new sendMessage($message))->call();
     }
 
@@ -358,23 +361,23 @@ class adminProducts extends Magazine
         }
        
         $client = new Client();
-        try{
+        try {
             $response=$client->request(
-                'POST', 
-                'http://telerobotic.ir/gfftb2017.php', 
+                'POST',
+                'http://telerobotic.ir/gfftb2017.php',
                 ['form_params' =>['fileUrl'=>$url,'tenantToken'=>$this->detect->tenant]]
             );
             $result = $response->getBody()->getContents();
         } catch (ClientException $e) {
             echo 'ClientException: '.$e->getMessage();
             return false;
-        }catch (TransferException $e) {
+        } catch (TransferException $e) {
             echo 'TransferException: '.$e->getMessage();
             return false;
-        }catch (\RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             echo 'RuntimeException: '.$e->getMessage();
             return false;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             echo 'RuntimeException: '.$e->getMessage();
             return false;
         }
@@ -382,7 +385,8 @@ class adminProducts extends Magazine
         return $result;
     }
 
-    private function generateRandomString($length=20) {
+    private function generateRandomString($length = 20)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
