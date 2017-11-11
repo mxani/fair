@@ -50,7 +50,7 @@
             @if($orderable)
             ,
             {
-                "text":"⭐️ خرید",
+                "text":"✅  ثبت ربات ",
                 "callback_data":"{!! interlink(["goto"=>"Orders",'id'=>$flow])!!}"
             }
             @endif
