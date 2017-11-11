@@ -22,6 +22,17 @@ class adminNotices extends Magazine
 
     public function addNotice()
     {
+        $last=Notice::orderby('sent_at','desc')->first()->sent_at??\Carbon\Carbon::now()->subdays(4);
+        $diff=\Carbon\Carbon::now()->diff($last->adddays(3));
+        if($diff->invert==0 ){
+            $message['chat_id'] = $this->detect->from->id;
+            $message['text'] = view('admin.noticeLimitMessage', ['diff'=>$diff])->render();
+            $message['parse_mode'] = 'html';
+            (new sendMessage($message))->call();
+            $this->caller(sayHello::class)->adminMenu();
+            return;
+        }
+
         $notice = Notice::create(['text' => null]);
         $this->meet['section'] = ['name'=>'newNotice','route'=>'adminNotices@updateNotice','id'=>$notice->id];
 
@@ -34,7 +45,8 @@ class adminNotices extends Magazine
         $message['chat_id'] = $chat_id;
         $message['text'] = "پیام جدید را وارد نمایید:";
         $message['parse_mode'] = 'html';
-        $message['reply_markup'] = '{"force_reply":true}';
+        $message['reply_markup'] =  view('cancleMenu')->render();
+        $this->meet['cancel']='adminNotices@index';
         (new sendMessage($message))->call();
     }
 
@@ -81,6 +93,9 @@ class adminNotices extends Magazine
             'parse_mode' => 'html',
             ]);
         $send();
+        $notice->sent_at=\Carbon\Carbon::now();
+        $notice->update();
+        $this->caller(sayHello::class)->adminMenu();
     }
 
 
