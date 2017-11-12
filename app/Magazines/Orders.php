@@ -170,7 +170,7 @@ class Orders extends Magazine{
         \Artisan::call('db:seed',['--class'=>'dummyDataSeeder']);
 
         $api=new \XB\telegramMethods\setWebhook([
-            'url'=>config('XBtelegram.host')."/telegram.php?tenant=$tenant",
+            'url'=>config('XBtelegram.host')."/telegram.php?tenant=".$tenant->token,
             'certificate'=>base_path('certify.crt'),
             'max_connections'=>80,
         ]);
