@@ -16,7 +16,7 @@ class CreateNoticesTable extends Migration
         Schema::create('notices', function (Blueprint $table) {
             $table->increments('id');
             $table->text( 'text' )->nullable();
-            $table->timeatamp('sent_at')->nullable();
+            $table->timestamp('sent_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
