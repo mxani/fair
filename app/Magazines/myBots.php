@@ -65,8 +65,8 @@ class myBots extends Magazine{
         }
         $tenantPath=base_path('bot/tenants/'.$tenant->token);
         if(\File::exists($tenantPath)){
-            if(!\File::exists('bot/tenants/deleted/')){
-                \File::makeDirectory('bot/tenants/deleted/');
+            if(!\File::exists(base_path('bot/tenants/deleted/'))){
+                \File::makeDirectory(base_path('bot/tenants/deleted/'));
             }
             \File::move($tenantPath,'bot/tenants/deleted/'.$tenant->token);
             $tenant->delete();
