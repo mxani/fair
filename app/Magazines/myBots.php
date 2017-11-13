@@ -63,11 +63,12 @@ class myBots extends Magazine{
             $this->main();
             return;
         }
-        if(\File::exists('bot/tenants/'.$tenant->token)){
+        $tenantPath=base_path('bot/tenants/'.$tenant->token);
+        if(\File::exists($tenantPath)){
             if(!\File::exists('bot/tenants/deleted/')){
                 \File::makeDirectory('bot/tenants/deleted/');
             }
-            \File::move('bot/tenants/'.$tenant->token,'bot/tenants/deleted/'.$tenant->token);
+            \File::move($tenantPath,'bot/tenants/deleted/'.$tenant->token);
             $tenant->delete();
         }
         $answer=new \XB\telegramMethods\answerCallbackQuery([
