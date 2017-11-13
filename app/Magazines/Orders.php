@@ -110,6 +110,7 @@ class Orders extends Magazine{
         do{
             $tenantToken=str_random(30);
         }while(\File::exists($tenantPath="bot/tenants/$tenantToken"));
+        $tenantPath=base_path($tenantPath);
 
         \File::makeDirectory("$tenantPath/logs",0755,true);
         \File::makeDirectory("$tenantPath/meetings");
