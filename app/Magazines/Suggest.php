@@ -103,7 +103,7 @@ class Suggest extends Magazine{
 
         if(count($product->files)>1){
             $pic=$this->detect->data->pic??0;
-            if($keyBpara['count']<5){
+            if($keyBpara['count']<30){
                 $keyBpara['count']++;
                 $keyBpara['prevpic']=empty($product->files[$pic-1])?null:$pic-1;
                 $keyBpara['nextpic']=empty($product->files[$pic+1])?null:$pic+1;
